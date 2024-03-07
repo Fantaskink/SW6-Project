@@ -3,9 +3,11 @@ import csv
 
 
 class BrailleCellWidget(tk.Frame):
-    def __init__(self, master, dots):
+    def __init__(self, master, dots, character):
         super().__init__(master)
+        self.dot_labels = None
         self.dots = dots
+        self.character = character
         self.create_labels()
 
     def create_labels(self):
@@ -16,6 +18,10 @@ class BrailleCellWidget(tk.Frame):
             label.grid(row=i % 3, column=i // 3)
             self.dot_labels.append(label)
 
+        # Create label for character
+        character_label = tk.Label(self, text=self.character)
+        character_label.grid(row=3, column=0, columnspan=2)  # Span two columns
+
     def update_display(self):
         # Update the display based on the state of the dots
         dot_symbols = ["○", "●"]  # Not raised and raised dot symbols
@@ -23,9 +29,11 @@ class BrailleCellWidget(tk.Frame):
             self.dot_labels[i]["text"] = dot_symbols[self.dots[i]]
 
 
-def create_and_place_braille_cells(master, braille_cells):
+def create_and_place_braille_cells(master, braille_cells, max_columns):
     for i, cell in enumerate(braille_cells):
-        cell.grid(row=0, column=i)
+        row_index = int(i / max_columns)
+        column_index = i % max_columns
+        cell.grid(row=row_index, column=column_index)
 
 
 # Function to load Braille character configurations from a CSV file
@@ -45,15 +53,21 @@ def load_braille_configurations(file_path):
 def char_to_braille(char, braille_configurations):
     sequence = []
     if char.isalpha() and char.isupper():  # Check if the character is an uppercase letter
-        sequence.append(braille_configurations['^'])  # Add the capitalization indicator
-        sequence.append(braille_configurations[char.lower()])  # Add the lowercase letter
+        sequence.append({"braille_letter": braille_configurations['Capital'],
+                         "symbol": "Capital"})  # Add the capital indicator
+
+        sequence.append({"braille_letter": braille_configurations[char.lower()],
+                         "symbol": char.lower()})  # Add the lowercase letter
 
     elif char.isdigit():  # Check if the character is a digit
-        sequence.append(braille_configurations['#'])  # Add the number indicator
-        sequence.append(braille_configurations[char])  # Add the digit
+        sequence.append({"braille_letter": braille_configurations['#'],
+                         "symbol": "#"})  # Add the number indicator
+        sequence.append({"braille_letter": braille_configurations[char],
+                         "symbol": char})  # Add the digit
 
     elif char in braille_configurations:  # If character fits none of the above categories, but is in the alphabet
-        sequence.append(braille_configurations[char])
+        sequence.append({"braille_letter": braille_configurations[char],
+                         "symbol": char})
 
     return sequence
 
@@ -63,8 +77,8 @@ def string_to_braille_cells(string, braille_configurations):
     braille_cells = []
     for char in string:
         sequence = char_to_braille(char, braille_configurations)
-        for character in sequence:
-            cell = BrailleCellWidget(root, character)
+        for letter in sequence:
+            cell = BrailleCellWidget(root, letter["braille_letter"], letter["symbol"])
             cell.update_display()
             braille_cells.append(cell)
     return braille_cells
@@ -78,11 +92,13 @@ combined_alphabet = {**braille_alphabet, **special_characters}
 root = tk.Tk()
 root.title("Braille Cells")
 
-test_string = "Hi!"
+test_string = "Hi! This is a test of numbers 12345"
+
+max_columns = 20
 
 # Convert the string to a list of Braille cells
-braille_cells = string_to_braille_cells(test_string, combined_alphabet)
-create_and_place_braille_cells(root, braille_cells)
+cells = string_to_braille_cells(test_string, combined_alphabet)
+create_and_place_braille_cells(root, cells, max_columns)
 
 # Run the Tkinter event loop
 root.mainloop()
