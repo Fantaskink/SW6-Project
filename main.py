@@ -1,74 +1,88 @@
-import time
-
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import idx2numpy
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
-
-DATA_DIR = 'data/'
-
-TEST_DATA_FILENAME = DATA_DIR + 't10k-images-idx3-ubyte'
-TEST_LABELS_FILENAME = DATA_DIR + 't10k-labels-idx1-ubyte'
-TRAIN_DATA_FILENAME = DATA_DIR + 'train-images-idx3-ubyte'
-TRAIN_LABELS_FILENAME = DATA_DIR + 'train-labels-idx1-ubyte'
+import tkinter as tk
+import csv
 
 
-def show_random_image_prediction(X_train, y_train, knn_classifier):
-    # Select a random index
-    random_index = np.random.randint(0, len(X_train))
+class BrailleCellWidget(tk.Frame):
+    def __init__(self, master, dots):
+        super().__init__(master)
+        self.dots = dots
+        self.create_labels()
 
-    # Retrieve the random image and label
-    random_image = X_train[random_index]
-    random_label = y_train[random_index]
+    def create_labels(self):
+        # Create labels for each dot
+        self.dot_labels = []
+        for i in range(6):
+            label = tk.Label(self, text="○", font=("Arial", 20))
+            label.grid(row=i % 3, column=i // 3)
+            self.dot_labels.append(label)
 
-    # Reshape the image into a 28x28 matrix
-    random_image = random_image.reshape(28, 28)
-
-    # Use the trained KNN classifier to predict the label of the image
-    predicted_label = knn_classifier.predict([random_image.ravel()])
-
-    # Display the image and the predicted label
-    plt.imshow(random_image, cmap='gray')
-    plt.title(f"Actual Label: {random_label}, Predicted Label: {predicted_label[0]}")
-    plt.axis('off')
-    plt.show()
-
-
-def main():
-    X_train = idx2numpy.convert_from_file(TRAIN_DATA_FILENAME)
-    y_train = idx2numpy.convert_from_file(TRAIN_LABELS_FILENAME)
-    X_test = idx2numpy.convert_from_file(TEST_DATA_FILENAME)
-    y_test = idx2numpy.convert_from_file(TEST_LABELS_FILENAME)
-
-    # Normalize the pixel values to be between 0 and 1
-    # X_train, X_test = X_train / 255.0, X_test / 255.0
-
-    X_train_flattened = X_train.reshape(X_train.shape[0], -1)
-    X_test_flattened = X_test.reshape(X_test.shape[0], -1)
-
-    # Display the shape of the datasets
-    print("Training data shape:", X_train_flattened.shape)
-    print("Testing data shape:", X_test_flattened.shape)
-
-    k = 3  # Number of neighbors
-    knn_classifier = KNeighborsClassifier(n_neighbors=k)
-
-    # Train the classifier
-    knn_classifier.fit(X_train_flattened, y_train)
-
-    # for i in range(100):
-    # show_random_image_prediction(X_train, y_train, knn_classifier)
-    # time.sleep(1)
-
-    # Predict on the test data
-    y_pred = knn_classifier.predict(X_test_flattened)
-
-    # Calculate accuracy
-    accuracy = accuracy_score(y_test, y_pred)
-    print("Accuracy:", accuracy)
+    def update_display(self):
+        # Update the display based on the state of the dots
+        dot_symbols = ["○", "●"]  # Not raised and raised dot symbols
+        for i in range(6):
+            self.dot_labels[i]["text"] = dot_symbols[self.dots[i]]
 
 
-if __name__ == '__main__':
-    main()
+def create_and_place_braille_cells(master, braille_cells):
+    for i, cell in enumerate(braille_cells):
+        cell.grid(row=0, column=i)
+
+
+# Function to load Braille character configurations from a CSV file
+def load_braille_configurations(file_path):
+    braille_configurations = {}
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        next(reader)  # Skip the header row
+        for row in reader:
+            char = row[0]
+            dots = [bool(int(dot)) for dot in row[1:]]
+            braille_configurations[char] = dots
+    return braille_configurations
+
+
+# Convert character to single or multiple Braille cells
+def char_to_braille(char, braille_configurations):
+    sequence = []
+    if char.isalpha() and char.isupper():  # Check if the character is an uppercase letter
+        sequence.append(braille_configurations['^'])  # Add the capitalization indicator
+        sequence.append(braille_configurations[char.lower()])  # Add the lowercase letter
+
+    elif char.isdigit():  # Check if the character is a digit
+        sequence.append(braille_configurations['#'])  # Add the number indicator
+        sequence.append(braille_configurations[char])  # Add the digit
+
+    elif char in braille_configurations:  # If character fits none of the above categories, but is in the alphabet
+        sequence.append(braille_configurations[char])
+
+    return sequence
+
+
+# Function to convert a string to a list of Braille cells using data from CSV file
+def string_to_braille_cells(string, braille_configurations):
+    braille_cells = []
+    for char in string:
+        sequence = char_to_braille(char, braille_configurations)
+        for character in sequence:
+            cell = BrailleCellWidget(root, character)
+            cell.update_display()
+            braille_cells.append(cell)
+    return braille_cells
+
+
+braille_alphabet = load_braille_configurations('braille/alphabet.csv')
+special_characters = load_braille_configurations('braille/special_characters.csv')
+combined_alphabet = {**braille_alphabet, **special_characters}
+
+# Create a Tkinter window
+root = tk.Tk()
+root.title("Braille Cells")
+
+test_string = "Hi!"
+
+# Convert the string to a list of Braille cells
+braille_cells = string_to_braille_cells(test_string, combined_alphabet)
+create_and_place_braille_cells(root, braille_cells)
+
+# Run the Tkinter event loop
+root.mainloop()
