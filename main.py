@@ -4,7 +4,7 @@ import csv
 
 class BrailleCellWidget(tk.Frame):
     def __init__(self, master, dots, character):
-        super().__init__(master)
+        super().__init__(master, borderwidth=2, relief="solid")
         self.dot_labels = None
         self.dots = dots
         self.character = character
@@ -19,7 +19,7 @@ class BrailleCellWidget(tk.Frame):
             self.dot_labels.append(label)
 
         # Create label for character
-        character_label = tk.Label(self, text=self.character)
+        character_label = tk.Label(self, text=self.character, width=5)
         character_label.grid(row=3, column=0, columnspan=2)  # Span two columns
 
     def update_display(self):
