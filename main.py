@@ -64,15 +64,27 @@ def char_to_braille(char, braille_configurations):
 
     elif char.isdigit():  # Check if the character is a digit
         sequence.append({"braille_letter": braille_configurations['#'],
-                         "symbol": "#"})  # Add the number indicator
+                         "symbol": "Numeral"})  # Add the number indicator
         sequence.append({"braille_letter": braille_configurations[char],
                          "symbol": char})  # Add the digit
 
     elif char in braille_configurations:  # If character fits none of the above categories, but is in the alphabet
-        sequence.append({"braille_letter": braille_configurations[char],
-                         "symbol": char})
+        if is_multi_cell_braille_symbol(char, braille_configurations):
+            num_cells = len(braille_configurations[char]) // 6
+            for i in range(num_cells):
+                sequence.append({"braille_letter": braille_configurations[char][i * 6: (i + 1) * 6],
+                                 "symbol": char})
+        else:
+            sequence.append({"braille_letter": braille_configurations[char],
+                             "symbol": char})
 
     return sequence
+
+
+def is_multi_cell_braille_symbol(char, braille_configurations):
+    if len(braille_configurations[char]) > 6:
+        return True
+    return False
 
 
 # Function to convert a string to a list of Braille cells using data from CSV file
@@ -131,12 +143,11 @@ def update_display():
     previous_button.grid(row=max_rows + 1, column=0)
 
 
-
 # Create a Tkinter window
 root = tk.Tk()
 root.title("Braille Cells")
 
-test_string = "Hi! This is a test of numbers 12345 and some other shit idk"
+test_string = "This is a test of [ and ] and 123    "
 
 # Create next and previous buttons
 next_button = tk.Button(root, text=">", command=next_page)
