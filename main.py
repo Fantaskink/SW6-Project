@@ -28,6 +28,9 @@ class BrailleCellWidget(tk.Frame):
         for i in range(6):
             self.dot_labels[i]["text"] = dot_symbols[self.dots[i]]
 
+    def __str__(self):
+        return f"Braille Cell: {self.character}"
+
 
 def create_and_place_braille_cells(master, braille_cells, max_columns):
     for i, cell in enumerate(braille_cells):
@@ -92,13 +95,24 @@ combined_alphabet = {**braille_alphabet, **special_characters}
 root = tk.Tk()
 root.title("Braille Cells")
 
-test_string = "Hi! This is a test of numbers 12345"
+test_string = "Hi! This is a test of numbers 12345 and some other shit idk"
 
-max_columns = 20
+max_columns = 10
+max_rows = 5
+
+max_cells = max_columns * max_rows
+
+cell_pages = []
+
+current_page = 1
 
 # Convert the string to a list of Braille cells
 cells = string_to_braille_cells(test_string, combined_alphabet)
-create_and_place_braille_cells(root, cells, max_columns)
+for index, cell in enumerate(cells):
+    if index % max_cells == 0:
+        cell_pages.append(cells[index:index + max_cells])
+
+create_and_place_braille_cells(root, cell_pages[current_page - 1], max_columns)
 
 # Run the Tkinter event loop
 root.mainloop()
