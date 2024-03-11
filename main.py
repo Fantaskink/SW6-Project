@@ -91,11 +91,56 @@ braille_alphabet = load_braille_configurations('braille/alphabet.csv')
 special_characters = load_braille_configurations('braille/special_characters.csv')
 combined_alphabet = {**braille_alphabet, **special_characters}
 
+
+def next_page():
+    global current_page
+    current_page += 1
+    if current_page > len(cell_pages) - 1:
+        current_page = len(cell_pages) - 1
+    update_display()
+
+
+def previous_page():
+    global current_page
+    current_page -= 1
+    if current_page < 0:
+        current_page = 0
+    update_display()
+
+
+def update_display():
+    global current_page
+    for widget in root.winfo_children():
+        widget.grid_forget()
+
+    for index, cell in enumerate(cell_pages[current_page]):
+        row_index = index // max_columns
+        column_index = index % max_columns
+        cell.grid(row=row_index, column=column_index)
+        cell.update_display()  # Update the display of the Braille cell widget
+        cell.update()
+
+    if len(cell_pages[current_page]) < max_cells:
+        for i in range(len(cell_pages[current_page]), max_cells):
+            row_index = i // max_columns
+            column_index = i % max_columns
+            empty_cell = BrailleCellWidget(root, [False] * 6, " ")
+            empty_cell.grid(row=row_index, column=column_index)
+
+    next_button.grid(row=max_rows + 1, column=9)
+    previous_button.grid(row=max_rows + 1, column=0)
+
+
+
 # Create a Tkinter window
 root = tk.Tk()
 root.title("Braille Cells")
 
 test_string = "Hi! This is a test of numbers 12345 and some other shit idk"
+
+# Create next and previous buttons
+next_button = tk.Button(root, text=">", command=next_page)
+previous_button = tk.Button(root, text="<", command=previous_page)
 
 max_columns = 10
 max_rows = 5
@@ -104,7 +149,7 @@ max_cells = max_columns * max_rows
 
 cell_pages = []
 
-current_page = 1
+current_page = 0
 
 # Convert the string to a list of Braille cells
 cells = string_to_braille_cells(test_string, combined_alphabet)
@@ -112,7 +157,7 @@ for index, cell in enumerate(cells):
     if index % max_cells == 0:
         cell_pages.append(cells[index:index + max_cells])
 
-create_and_place_braille_cells(root, cell_pages[current_page - 1], max_columns)
+update_display()
 
 # Run the Tkinter event loop
 root.mainloop()
