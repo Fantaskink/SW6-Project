@@ -33,6 +33,7 @@ T__31=32
 Lowercase=33
 Uppercase=34
 Digit=35
+Newline=36
 ','=1
 '.'=2
 '\''=3

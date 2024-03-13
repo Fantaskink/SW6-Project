@@ -3,6 +3,8 @@ from antlr4 import *
 from gen.uncontracted_brailleLexer import uncontracted_brailleLexer
 from gen.uncontracted_brailleParser import uncontracted_brailleParser
 from CellGenerator import CellGenerator
+import socket
+import threading
 
 
 def get_cells(string):
@@ -62,13 +64,37 @@ class MainWindow(tk.Tk):
         self.geometry("800x600")
         self.cell_pages = []
         self.current_page = 0
-        self.render_braille_cells()
+        #self.render_braille_cells()
 
-    def render_braille_cells(self):
-        test_string = "This is a test of [ and ] and 123 and / : lorem ipsum dolor sit amet consectetur adipiscing elit"
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind(('localhost', 12345))
+        self.sock.listen(1)
+
+        threading.Thread(target=self.listen_for_data).start()
+
+    
+    def listen_for_data(self):
+        conn, addr = self.sock.accept()
+
+        while True:
+
+            data = conn.recv(1024)
+
+            if not data:
+                break
+
+            string = data.decode('utf-8')
+
+            if len(string) > 0:
+                print(string)
+
+            self.render_braille_cells(string)
+        conn.close()
+
+    def render_braille_cells(self, string):
 
         # Convert the string to a list of Braille cells
-        cells = get_cells(test_string)
+        cells = get_cells(string)
         cell_widgets = convert_to_widgets(cells)
 
         max_columns = 20
@@ -87,7 +113,7 @@ class MainWindow(tk.Tk):
         # Place the Braille cells on the window
         self.update_display()
 
-        self.next_button.grid(row=max_rows + 1, column=9)
+        self.next_button.grid(row=max_rows + 1, column=max_columns - 1)
         self.previous_button.grid(row=max_rows + 1, column=0)
 
     def next_page(self):

@@ -77,3 +77,10 @@ grammar uncontracted_braille;
     Digit
         :   [0-9]
         ;
+
+    Newline
+        :   (   '\r' '\n'?
+            |   '\n'
+            )
+            -> skip
+        ;
