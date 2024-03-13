@@ -1,41 +1,32 @@
-grammar braille;
+grammar uncontracted_braille;
 
     text
         :   (word | nonword)* EOF
         ;
 
     nonword
-        :   punctuation | grouping_punctuation | op_and_comp
+        :   punctuation | grouping_punctuation | op_and_comp | currency_and_measurement
         ;
 
     word
         :   sequence
         ;
 
-    strong_contraction
-        :   ('and' | 'for' | 'of' | 'the' | 'with') sequence?
-        ;
-
-    strong_groupsign
-        :   ('ch' | 'gh' | 'sh' | 'th' | 'wh' | 'ed' | 'er' | 'ou' | 'ow' | 'st' | 'ing' | 'ar') sequence?
-        ;
-
     sequence
-        :   (strong_contraction | strong_groupsign
-        | capital_sequence | capital_first_letter | numeral_sequence | lowercase_sequence)
+        :   (capital_sequence | capital_first_letter | numeral_sequence | lowercase_sequence)
         ;
 
 
     capital_first_letter
-        :   Uppercase Lowercase* (capital_sequence | capital_first_letter | numeral_sequence)?
+        :   uppercase lowercase* (capital_sequence | capital_first_letter | numeral_sequence)?
         ;
 
     capital_sequence
-        :   Uppercase Uppercase+ (numeral_sequence | capital_terminator )?
+        :   uppercase uppercase+ (numeral_sequence | capital_terminator )?
         ;
 
     numeral_sequence
-        :   Digit+ (capital_first_letter | capital_sequence | lowercase_sequence)?
+        :   digit+ (capital_first_letter | capital_sequence | lowercase_sequence)?
         ;
 
     capital_terminator
@@ -43,7 +34,7 @@ grammar braille;
         ;
 
     lowercase_sequence
-        :   Lowercase+ (capital_first_letter | capital_sequence | numeral_sequence)?
+        :   lowercase+ (capital_first_letter | capital_sequence | numeral_sequence)?
         ;
 
     punctuation
@@ -56,14 +47,24 @@ grammar braille;
         ;
 
     op_and_comp
-        :   '+' | '='
+        :   '+' | '=' | '*'
         ;
 
     currency_and_measurement
         :   '€' | '$' | '£'
         ;
 
+    lowercase
+        :   Lowercase
+        ;
 
+    uppercase
+        :   Uppercase
+        ;
+
+    digit
+        :   Digit
+        ;
 
     Lowercase
         :   [a-z]
