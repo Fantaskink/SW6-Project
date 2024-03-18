@@ -64,7 +64,7 @@ class MainWindow(tk.Tk):
         self.geometry("800x600")
         self.cell_pages = []
         self.current_page = 0
-        #self.render_braille_cells()
+        # self.render_braille_cells()
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', 12345))
@@ -72,7 +72,6 @@ class MainWindow(tk.Tk):
 
         threading.Thread(target=self.listen_for_data).start()
 
-    
     def listen_for_data(self):
         conn, addr = self.sock.accept()
 

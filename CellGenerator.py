@@ -42,6 +42,10 @@ class CellGenerator(uncontracted_brailleVisitor):
         self.symbols.append(GroupingPunctuation(ctx.getChild(0).getText()))
         return
 
+    def visitOp_and_comp(self, ctx:uncontracted_brailleParser.Op_and_compContext):
+        self.symbols.append(OpAndComp(ctx.getChild(0).getText()))
+        return
+
     def visitUppercase(self, ctx:uncontracted_brailleParser.UppercaseContext):
         self.symbols.append(Alphabetic(ctx.getChild(0).getText()))
         return
