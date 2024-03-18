@@ -102,8 +102,8 @@ class Punctuation:
             "_": [[0, 0, 0, 1, 0, 1], [0, 0, 1, 0, 0, 1]],
             "?": [0, 1, 1, 0, 0, 1],
             ";": [0, 1, 1, 0, 0, 0],
-            "/": [[0, 0, 0, 1, 1, 1, ], [0, 0, 1, 1, 0, 0]],
-            "\\": [[0, 0, 0, 1, 1, 1, ], [1, 0, 0, 0, 0, 1]]
+            "/": [[0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 0, 0]],
+            "\\": [[0, 0, 0, 1, 1, 1], [1, 0, 0, 0, 0, 1]]
         }
         return binary_dict[character]
 
@@ -156,7 +156,11 @@ class Numeral:
 
 class OpAndComp:
     def __init__(self, character):
-        self.cells = [Cell(self.get_dots(character), character)]
+        dots = self.get_dots(character)
+        if isinstance(dots[0], list):
+            self.cells = [Cell(dots[0], character), Cell(dots[1], character)]
+        else:
+            self.cells = [Cell(self.get_dots(character), character)]
 
     def __str__(self):
         return f"OpAndComp: {self.cells}"
@@ -165,6 +169,6 @@ class OpAndComp:
         binary_dict = {
             '+': [[0, 0, 0, 0, 1, 0], [0, 1, 1, 0, 1, 0]],
             '*': [[0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 1, 0]],
-
+            '=': [[0, 0, 0, 0, 1, 0], [0, 1, 1, 0, 1, 1]]
         }
         return binary_dict[character]
