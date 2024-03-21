@@ -60,7 +60,7 @@ class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Braille Cells")
-        self.geometry("800x600")
+        self.geometry("1150x200")
         self.cell_pages = []
         self.cells_on_page = []
         self.current_page = 0
