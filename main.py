@@ -63,8 +63,21 @@ class MainWindow(tk.Tk):
         self.title("Braille Cells")
         self.geometry("800x600")
         self.cell_pages = []
+        self.cells_on_page = []
         self.current_page = 0
-        # self.render_braille_cells()
+
+        self.max_rows = 1
+        self.max_columns = 20
+
+        self.next_button = tk.Button(self, text=">", command=self.next_page)
+        self.previous_button = tk.Button(self, text="<", command=self.previous_page)
+        self.next_button.grid(row=self.max_rows + 1, column=self.max_columns - 1)
+        self.previous_button.grid(row=self.max_rows + 1, column=0)
+
+        self.label = tk.Label(self, text="")
+        self.label.grid(row=self.max_rows+2, column=0, columnspan=20, padx=10, pady=10)
+
+        self.initialise_empty_display()
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', 12345))
@@ -76,7 +89,6 @@ class MainWindow(tk.Tk):
         conn, addr = self.sock.accept()
 
         while True:
-
             data = conn.recv(1024)
 
             if not data:
@@ -90,30 +102,43 @@ class MainWindow(tk.Tk):
             self.render_braille_cells(string)
         conn.close()
 
+    def get_empty_widgets(self):
+        widgets = []
+        for i in range(self.max_rows):
+            for j in range(self.max_columns):
+                cell = BrailleCellWidget(self, [False] * 6, " ")
+                cell.grid(row=i, column=j)
+                widgets.append(cell)
+        return widgets
+
+    def initialise_empty_display(self):
+        widgets = self.get_empty_widgets()
+        self.cell_pages.append(widgets)
+        self.cells_on_page = self.cell_pages[self.current_page]
+        self.update_display()
+
     def render_braille_cells(self, string):
+        self.label.config(text=string)
 
         # Convert the string to a list of Braille cells
         cells = get_cells(string)
         cell_widgets = convert_to_widgets(cells)
 
-        max_columns = 20
-        max_rows = 1
-        max_cells = max_columns * max_rows
+        if len(cell_widgets) == 0:
+            return
+
+        max_cells = self.max_rows * self.max_columns
 
         # Create a list of pages, each page containing max_cells number of cells
         self.cell_pages = [cell_widgets[i:i + max_cells] for i in range(0, len(cell_widgets), max_cells)]
 
         # Create next and previous buttons
-        self.next_button = tk.Button(self, text=">", command=self.next_page)
-        self.previous_button = tk.Button(self, text="<", command=self.previous_page)
 
         self.cells_on_page = self.cell_pages[self.current_page]
 
         # Place the Braille cells on the window
         self.update_display()
 
-        self.next_button.grid(row=max_rows + 1, column=max_columns - 1)
-        self.previous_button.grid(row=max_rows + 1, column=0)
 
     def next_page(self):
         self.current_page = min(self.current_page + 1, len(self.cell_pages) - 1)
@@ -125,26 +150,24 @@ class MainWindow(tk.Tk):
 
     def update_display(self):
         for widget in self.winfo_children():
-            if widget not in (self.next_button, self.previous_button):
+            if widget not in (self.next_button, self.previous_button, self.label):
                 widget.grid_forget()
-
-        max_columns = 20
-        max_rows = 1
-        max_cells = max_columns * max_rows
 
         self.cells_on_page = self.cell_pages[self.current_page]
 
         for index, cell in enumerate(self.cells_on_page):
-            row_index = index // max_columns
-            column_index = index % max_columns
+            row_index = index // self.max_columns
+            column_index = index % self.max_columns
             cell.grid(row=row_index, column=column_index)
             cell.update_display()  # Update the display of the Braille cell widget
             cell.update()
 
+        max_cells = self.max_rows * self.max_columns
+
         if len(self.cells_on_page) < max_cells:
             for i in range(len(self.cells_on_page), max_cells):
-                row_index = i // max_columns
-                column_index = i % max_columns
+                row_index = i // self.max_columns
+                column_index = i % self.max_columns
                 empty_cell = BrailleCellWidget(self, [False] * 6, " ")
                 empty_cell.grid(row=row_index, column=column_index)
 
