@@ -3,6 +3,7 @@ from antlr4 import *
 from gen.uncontracted_brailleLexer import uncontracted_brailleLexer
 from gen.uncontracted_brailleParser import uncontracted_brailleParser
 from CellGenerator import CellGenerator
+from tts import pronounce_letters
 import socket
 import threading
 
@@ -73,6 +74,9 @@ class MainWindow(tk.Tk):
         self.next_button.grid(row=self.max_rows + 1, column=self.max_columns - 1)
         self.previous_button.grid(row=self.max_rows + 1, column=0)
 
+        self.tts_button = tk.Button(self, text="TTS", command=self.text_to_speech)
+        self.tts_button.grid(row=self.max_rows + 1, column=self.max_columns // 2)
+
         self.label = tk.Label(self, text="")
         self.label.grid(row=self.max_rows + 2, column=0, columnspan=20, padx=10, pady=10)
 
@@ -141,9 +145,15 @@ class MainWindow(tk.Tk):
         self.current_page = max(0, self.current_page - 1)
         self.update_display()
 
+    def text_to_speech(self):
+        text = self.label.cget("text")
+        if len(text) == 0:
+            return
+        pronounce_letters(text)
+
     def update_display(self):
         for widget in self.winfo_children():
-            if widget not in (self.next_button, self.previous_button, self.label):
+            if isinstance(widget, BrailleCellWidget):
                 widget.grid_forget()
 
         self.cells_on_page = self.cell_pages[self.current_page]
