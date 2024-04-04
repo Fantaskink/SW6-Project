@@ -94,16 +94,19 @@ class MainWindow(tk.Tk):
         self.cells_on_page = []
         self.current_page = 0
 
-        self.next_button = tk.Button(self, text=">", command=self.next_page)
-        self.previous_button = tk.Button(self, text="<", command=self.previous_page)
-        self.next_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS - 1)
-        self.previous_button.grid(row=MAX_ROWS + 1, column=0)
+        self.button_frame = tk.Frame(self)
+        self.button_frame.grid(row=1, column=0, columnspan=MAX_COLUMNS)
 
-        self.tts_button = tk.Button(self, text="TTS", command=self.text_to_speech)
-        self.tts_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2)
+        self.next_button = tk.Button(self.button_frame, text=">", command=self.next_page)
+        self.previous_button = tk.Button(self.button_frame, text="<", command=self.previous_page)
+        self.next_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS - 1, sticky=tk.W)
+        self.previous_button.grid(row=MAX_ROWS + 1, column=0, sticky=tk.E)
 
-        self.update_button = tk.Button(self, text="Update display", command=self.update_button)
-        self.update_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1)
+        self.tts_button = tk.Button(self.button_frame, text="TTS", command=self.text_to_speech)
+        self.tts_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2, sticky=tk.W)
+
+        self.update_button = tk.Button(self.button_frame, text="Update display", command=self.update_button)
+        self.update_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
 
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
