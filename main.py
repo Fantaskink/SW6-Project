@@ -20,20 +20,22 @@ class SocketHandler:
         self.shared_string = shared_string
 
     def listen_for_data(self):
-        conn, addr = self.sock.accept()
-
         while True:
-            data = conn.recv(1024)
-
-            if not data:
-                break
-
-            string = data.decode('utf-8')
-
-            if len(string) > 0:
-                print(string)
-                self.shared_string = string
-        conn.close()
+            try:
+                conn, addr = self.sock.accept()
+                data = conn.recv(1024)
+                if not data:
+                    break
+                string = data.decode('utf-8')
+                if len(string) > 0:
+                    print(string)
+                    self.shared_string = string
+            except Exception as e:
+                print(f"Error: {e}")
+                print("Attempting to reconnect...")
+                continue
+            finally:
+                conn.close()
 
 
 def get_cells(string):
