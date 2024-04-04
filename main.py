@@ -7,6 +7,34 @@ from tts import pronounce_letters
 import socket
 import threading
 
+PORT = 12345
+MAX_ROWS = 1
+MAX_COLUMNS = 20
+
+
+class SocketHandler:
+    def __init__(self, shared_string):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind(('localhost', PORT))
+        self.sock.listen(1)
+        self.shared_string = shared_string
+
+    def listen_for_data(self):
+        conn, addr = self.sock.accept()
+
+        while True:
+            data = conn.recv(1024)
+
+            if not data:
+                break
+
+            string = data.decode('utf-8')
+
+            if len(string) > 0:
+                print(string)
+                self.shared_string = string
+        conn.close()
+
 
 def get_cells(string):
     input_stream = InputStream(string)
@@ -66,49 +94,30 @@ class MainWindow(tk.Tk):
         self.cells_on_page = []
         self.current_page = 0
 
-        self.max_rows = 1
-        self.max_columns = 20
-
         self.next_button = tk.Button(self, text=">", command=self.next_page)
         self.previous_button = tk.Button(self, text="<", command=self.previous_page)
-        self.next_button.grid(row=self.max_rows + 1, column=self.max_columns - 1)
-        self.previous_button.grid(row=self.max_rows + 1, column=0)
+        self.next_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS - 1)
+        self.previous_button.grid(row=MAX_ROWS + 1, column=0)
 
         self.tts_button = tk.Button(self, text="TTS", command=self.text_to_speech)
-        self.tts_button.grid(row=self.max_rows + 1, column=self.max_columns // 2)
+        self.tts_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2)
+
+        self.update_button = tk.Button(self, text="Update display", command=self.update_button)
+        self.update_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1)
 
         self.label = tk.Label(self, text="")
-        self.label.grid(row=self.max_rows + 2, column=0, columnspan=20, padx=10, pady=10)
+        self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
-        self.render_braille_cells("")
+        self.shared_string = ""
+        self.socket_handler = SocketHandler(self.shared_string)
+        threading.Thread(target=self.socket_handler.listen_for_data).start()
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('localhost', 12345))
-        self.sock.listen(1)
-
-        threading.Thread(target=self.listen_for_data).start()
-
-    def listen_for_data(self):
-        conn, addr = self.sock.accept()
-
-        while True:
-            data = conn.recv(1024)
-
-            if not data:
-                break
-
-            string = data.decode('utf-8')
-
-            if len(string) > 0:
-                print(string)
-
-            self.render_braille_cells(string)
-        conn.close()
+        self.render_braille_cells(self.shared_string)
 
     def get_empty_widgets(self):
         widgets = []
-        for i in range(self.max_rows):
-            for j in range(self.max_columns):
+        for i in range(MAX_ROWS):
+            for j in range(MAX_COLUMNS):
                 cell = BrailleCellWidget(self, [False] * 6, " ")
                 cell.grid(row=i, column=j)
                 widgets.append(cell)
@@ -126,7 +135,7 @@ class MainWindow(tk.Tk):
         if not cell_widgets:
             cell_widgets = self.get_empty_widgets()
 
-        max_cells = self.max_rows * self.max_columns
+        max_cells = MAX_ROWS * MAX_COLUMNS
 
         # Create a list of pages, each page containing max_cells number of cells
         self.cell_pages = [cell_widgets[i:i + max_cells] for i in range(0, len(cell_widgets), max_cells)]
@@ -151,6 +160,10 @@ class MainWindow(tk.Tk):
             return
         pronounce_letters(text)
 
+    def update_button(self):
+        self.shared_string = self.socket_handler.shared_string
+        self.render_braille_cells(self.shared_string)
+
     def update_display(self):
         for widget in self.winfo_children():
             if isinstance(widget, BrailleCellWidget):
@@ -159,18 +172,18 @@ class MainWindow(tk.Tk):
         self.cells_on_page = self.cell_pages[self.current_page]
 
         for index, cell in enumerate(self.cells_on_page):
-            row_index = index // self.max_columns
-            column_index = index % self.max_columns
+            row_index = index // MAX_COLUMNS
+            column_index = index % MAX_COLUMNS
             cell.grid(row=row_index, column=column_index)
             cell.update_display()  # Update the display of the Braille cell widget
             # cell.update()
 
-        max_cells = self.max_rows * self.max_columns
+        max_cells = MAX_ROWS * MAX_COLUMNS
 
         if len(self.cells_on_page) < max_cells:
             for i in range(len(self.cells_on_page), max_cells):
-                row_index = i // self.max_columns
-                column_index = i % self.max_columns
+                row_index = i // MAX_COLUMNS
+                column_index = i % MAX_COLUMNS
                 empty_cell = BrailleCellWidget(self, [False] * 6, " ")
                 empty_cell.grid(row=row_index, column=column_index)
 
