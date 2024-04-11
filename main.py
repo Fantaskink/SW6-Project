@@ -91,7 +91,7 @@ class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Braille Cells")
-        self.geometry("1150x200")
+        self.geometry("1100x200")
         self.cell_pages = []
         self.cells_on_page = []
         self.current_page = 0
@@ -170,21 +170,24 @@ class MainWindow(tk.Tk):
         self.render_braille_cells(self.shared_string)
 
     def update_display(self):
-        for widget in self.winfo_children():
+        # Remove all cells from the grid
+        for widget in self.grid_slaves():
             if isinstance(widget, BrailleCellWidget):
                 widget.grid_forget()
 
+        # Update the cells on the current page
         self.cells_on_page = self.cell_pages[self.current_page]
 
+        # Update the display of each cell
         for index, cell in enumerate(self.cells_on_page):
             row_index = index // MAX_COLUMNS
             column_index = index % MAX_COLUMNS
             cell.grid(row=row_index, column=column_index)
             cell.update_display()  # Update the display of the Braille cell widget
-            # cell.update()
 
+        # If there are fewer cells on the page than the maximum number of cells,
+        # fill the rest of the page with empty cells
         max_cells = MAX_ROWS * MAX_COLUMNS
-
         if len(self.cells_on_page) < max_cells:
             for i in range(len(self.cells_on_page), max_cells):
                 row_index = i // MAX_COLUMNS

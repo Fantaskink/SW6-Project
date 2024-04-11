@@ -3,52 +3,73 @@ import * as net from 'net';
 
 let socket: net.Socket | undefined;
 let disposable: vscode.Disposable | undefined;
+let reconnectInterval: NodeJS.Timeout | undefined;
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+const connectToServer = () => {
+    // If already connected, do nothing
+    if (socket && socket.connecting) {
+        return;
+    }
+
+    socket = new net.Socket();
+
+    socket.connect(12345, 'localhost', () => {
+        console.log('Connected to the server!');
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval);
+            reconnectInterval = undefined;
+        }
+    });
+
+    socket.on('error', (err) => {
+        console.error(err);
+        // If not already trying to reconnect, start trying
+        if (!reconnectInterval) {
+            reconnectInterval = setInterval(connectToServer, 5000); // Retry every 5 seconds
+        }
+    });
+
+    socket.on('close', () => {
+        console.log('Disconnected from the server');
+        // If not already trying to reconnect, start trying
+        if (!reconnectInterval) {
+            reconnectInterval = setInterval(connectToServer, 5000); // Retry every 5 seconds
+        }
+    });
+};
+
 export function activate(context: vscode.ExtensionContext) {
-	socket = new net.Socket();
-	socket.connect(12345, 'localhost' , () => {
-		console.log('Connected to the server!');
-	});
+    connectToServer();
 
-	socket.on('error', (err) => {
-		console.error(err);
-	});
+    disposable = vscode.window.onDidChangeTextEditorSelection((event) => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const position = editor.selection.active;
+            const currentLine = editor.document.lineAt(position.line);
+            const currentLineText = currentLine.text;
 
-	disposable = vscode.window.onDidChangeTextEditorSelection((event) => {
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			const position = editor.selection.active;
-			const currentLine = editor.document.lineAt(position.line);
-			const currentLineText = currentLine.text;
+            if (socket && !socket.connecting) {
+                socket.write(currentLineText);
+                console.log('Sent:', currentLineText);
+            }
+        }
+    });
 
-			if (socket) {
-				socket.write(currentLineText + '\n');
-				console.log('Sent: ' + currentLineText);
-			}
-		}
-	});
+    console.log('Congratulations, your extension "braille-reader" is now active!');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "braille-reader" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	
-
-	context.subscriptions.push(disposable);
+    context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {
-	if (disposable) {
-		disposable.dispose();
-	}
+    if (disposable) {
+        disposable.dispose();
+    }
 
-	if (socket) {
-		socket.end();
-	}
+    if (socket) {
+        socket.end();
+    }
+
+    if (reconnectInterval) {
+        clearInterval(reconnectInterval);
+    }
 }
