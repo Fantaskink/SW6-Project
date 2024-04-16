@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "OCR to Braille",
+  "version": "1.0",
+ 
+  "description": "Presents a right-click menu option to convert an image to Braille.",
+ 
+  "background": {
+    "scripts": ["background.js"]
+  },
+ 
+  "permissions": ["menus"]
+}

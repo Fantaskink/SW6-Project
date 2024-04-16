@@ -107,8 +107,8 @@ class MainWindow(tk.Tk):
         self.tts_button = tk.Button(self.button_frame, text="TTS", command=self.text_to_speech)
         self.tts_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2, sticky=tk.W)
 
-        self.update_button = tk.Button(self.button_frame, text="Update display", command=self.update_button)
-        self.update_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
+        self.refresh_button = tk.Button(self.button_frame, text="Update display", command=self.refresh_display)
+        self.refresh_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
 
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
@@ -165,7 +165,7 @@ class MainWindow(tk.Tk):
             return
         pronounce_letters(text)
 
-    def update_button(self):
+    def refresh_display(self):
         self.shared_string = self.socket_handler.shared_string
         self.render_braille_cells(self.shared_string)
 
