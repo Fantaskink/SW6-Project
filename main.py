@@ -17,6 +17,7 @@ class SocketHandler:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', PORT))
         self.sock.listen(1)
+
         self.shared_string = shared_string
 
     def listen_for_data(self):
