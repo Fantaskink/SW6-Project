@@ -13,12 +13,13 @@ MAX_COLUMNS = 20
 
 
 class SocketHandler:
-    def __init__(self, shared_string):
+    def __init__(self, shared_string, main_window):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind(('localhost', PORT))
         self.sock.listen(1)
 
         self.shared_string = shared_string
+        self.main_window = main_window
 
     def listen_for_data(self):
         while True:
@@ -31,6 +32,7 @@ class SocketHandler:
                 if len(string) > 0:
                     print(string)
                     self.shared_string = string
+                    self.main_window.render_braille_cells(string)
             except Exception as e:
                 print(f"Error: {e}")
                 print("Attempting to reconnect...")
@@ -97,6 +99,8 @@ class MainWindow(tk.Tk):
         self.cells_on_page = []
         self.current_page = 0
 
+        self.updates_blocked = False
+
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(row=1, column=0, columnspan=MAX_COLUMNS)
 
@@ -108,14 +112,14 @@ class MainWindow(tk.Tk):
         self.tts_button = tk.Button(self.button_frame, text="TTS", command=self.text_to_speech)
         self.tts_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2, sticky=tk.W)
 
-        self.refresh_button = tk.Button(self.button_frame, text="Update display", command=self.refresh_display)
-        self.refresh_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
+        self.block_updates_button = tk.Button(self.button_frame, text="Unlocked", command=self.block_updates)
+        self.block_updates_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
 
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
         self.shared_string = ""
-        self.socket_handler = SocketHandler(self.shared_string)
+        self.socket_handler = SocketHandler(self.shared_string, self)
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
         self.render_braille_cells(self.shared_string)
@@ -130,6 +134,8 @@ class MainWindow(tk.Tk):
         return widgets
 
     def render_braille_cells(self, string):
+        if self.updates_blocked:
+            return
         self.label.config(text=string)
 
         self.current_page = 0
@@ -166,9 +172,9 @@ class MainWindow(tk.Tk):
             return
         pronounce_letters(text)
 
-    def refresh_display(self):
-        self.shared_string = self.socket_handler.shared_string
-        self.render_braille_cells(self.shared_string)
+    def block_updates(self):
+        self.updates_blocked = not self.updates_blocked
+        self.block_updates_button.config(text="Locked" if self.updates_blocked else "Unlocked")
 
     def update_display(self):
         # Remove all cells from the grid
@@ -195,6 +201,9 @@ class MainWindow(tk.Tk):
                 column_index = i % MAX_COLUMNS
                 empty_cell = BrailleCellWidget(self, [False] * 6, " ")
                 empty_cell.grid(row=row_index, column=column_index)
+
+        # Update the window immediately
+        self.update_idletasks()
 
 
 def main():
