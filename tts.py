@@ -15,17 +15,19 @@ def pronounce_letters(text):
     # Create a gTTS object for the modified text
     tts = gTTS(new_text)
     # Save the audio as a temporary file
-    tts.save("pronunciation.mp3")
-    # Load the audio file
-    audio = AudioSegment.from_mp3("pronunciation.mp3")
-    # Play the audio
-    play_obj = sa.play_buffer(audio.raw_data, num_channels=audio.channels, bytes_per_sample=audio.sample_width,
-                              sample_rate=audio.frame_rate)
-    # Wait for playback to finish
-    play_obj.wait_done()
-
-    # Remove the temporary file
-    os.remove("pronunciation.mp3")
+    tts.save("temp/tts.mp3")
+    try:
+        # Load the audio file
+        audio = AudioSegment.from_mp3("temp/tts.mp3")
+        # Play the audio
+        play_obj = sa.play_buffer(audio.raw_data, num_channels=audio.channels, bytes_per_sample=audio.sample_width,
+                                  sample_rate=audio.frame_rate)
+        # Wait for playback to finish
+        play_obj.wait_done()
+    finally:
+        # Remove the temporary file
+        if os.path.exists("temp/tts.mp3"):
+            os.remove("temp/tts.mp3")
 
 
 def get_string_from_char(char):
