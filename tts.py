@@ -3,6 +3,7 @@ from pydub import AudioSegment
 import simpleaudio as sa
 import os
 import re
+import pygame
 
 
 def pronounce_letters(text):
@@ -17,13 +18,15 @@ def pronounce_letters(text):
     # Save the audio as a temporary file
     tts.save("temp/tts.mp3")
     try:
+        # Initialize pygame mixer
+        pygame.mixer.init()
         # Load the audio file
-        audio = AudioSegment.from_mp3("temp/tts.mp3")
+        pygame.mixer.music.load("temp/tts.mp3")
         # Play the audio
-        play_obj = sa.play_buffer(audio.raw_data, num_channels=audio.channels, bytes_per_sample=audio.sample_width,
-                                  sample_rate=audio.frame_rate)
+        pygame.mixer.music.play()
         # Wait for playback to finish
-        play_obj.wait_done()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
     finally:
         # Remove the temporary file
         if os.path.exists("temp/tts.mp3"):
@@ -75,3 +78,7 @@ def replace_with_phonetic_spelling(string):
     # Replace "a" with "ay"
     string = re.sub(r" a ", " ay ", string)
     return string
+
+
+if __name__ == "__main__":
+    pass
