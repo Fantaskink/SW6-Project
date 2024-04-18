@@ -170,7 +170,7 @@ class MainWindow(tk.Tk):
         text = self.label.cget("text")
         if len(text) == 0:
             return
-        pronounce_letters(text)
+        threading.Thread(target=pronounce_letters, args=(text,)).start()
 
     def block_updates(self):
         self.updates_blocked = not self.updates_blocked
