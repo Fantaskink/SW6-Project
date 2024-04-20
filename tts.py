@@ -12,7 +12,7 @@ def pronounce_letters(text):
 
     new_text = replace_chars_with_string(text)
     new_text = replace_with_phonetic_spelling(new_text)
-    print(new_text)
+    #print(new_text)
     # Create a gTTS object for the modified text
     tts = gTTS(new_text)
     # Save the audio as a temporary file

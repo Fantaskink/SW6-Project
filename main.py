@@ -41,6 +41,7 @@ class SocketHandler:
                 conn.close()
 
 
+
 def get_cells(string):
     input_stream = InputStream(string)
     lexer = uncontracted_brailleLexer(input_stream)
@@ -84,7 +85,10 @@ class BrailleCellWidget(tk.Frame):
         # Update the display based on the state of the dots
         dot_symbols = ["○", "●"]  # Not raised and raised dot symbols
         for i in range(6):
-            self.dot_labels[i]["text"] = dot_symbols[self.dots[i]]
+            if i + 1 in self.dots:
+                self.dot_labels[i]["text"] = dot_symbols[1]
+            else:
+                self.dot_labels[i]["text"] = dot_symbols[0]
 
     def __str__(self):
         return f"Braille Cell: {self.character} {self.dots}"
@@ -119,6 +123,7 @@ class MainWindow(tk.Tk):
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
         self.shared_string = ""
+
         self.socket_handler = SocketHandler(self.shared_string, self)
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
@@ -128,7 +133,7 @@ class MainWindow(tk.Tk):
         widgets = []
         for i in range(MAX_ROWS):
             for j in range(MAX_COLUMNS):
-                cell = BrailleCellWidget(self, [False] * 6, " ")
+                cell = BrailleCellWidget(self, [], " ")
                 cell.grid(row=i, column=j)
                 widgets.append(cell)
         return widgets
