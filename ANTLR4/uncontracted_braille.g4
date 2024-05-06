@@ -26,7 +26,7 @@ grammar uncontracted_braille;
         ;
 
     numeral_sequence
-        :   digit+ (capital_first_letter | capital_sequence | lowercase_sequence)?
+        :   digit+ ('.' digit+ )* (capital_first_letter | capital_sequence | lowercase_sequence)?
         ;
 
     capital_terminator
