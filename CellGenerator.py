@@ -30,35 +30,30 @@ class CellGenerator(uncontracted_brailleVisitor):
         self.symbols.append(CapitalTerminator())
         return self.visitChildren(ctx)
 
-    def visitNumeral_sequence(self, ctx:uncontracted_brailleParser.Numeral_sequenceContext):
+    def visitNumeral_sequence(self, ctx: uncontracted_brailleParser.Numeral_sequenceContext):
         self.symbols.append(NumeralIndicator())
         return self.visitChildren(ctx)
 
-    def visitPunctuation(self, ctx:uncontracted_brailleParser.PunctuationContext):
+    def visitPunctuation(self, ctx: uncontracted_brailleParser.PunctuationContext):
         self.symbols.append(Punctuation(ctx.getChild(0).getText()))
         return
 
-    def visitGrouping_punctuation(self, ctx:uncontracted_brailleParser.Grouping_punctuationContext):
+    def visitGrouping_punctuation(self, ctx: uncontracted_brailleParser.Grouping_punctuationContext):
         self.symbols.append(GroupingPunctuation(ctx.getChild(0).getText()))
         return
 
-    def visitOp_and_comp(self, ctx:uncontracted_brailleParser.Op_and_compContext):
+    def visitOp_and_comp(self, ctx: uncontracted_brailleParser.Op_and_compContext):
         self.symbols.append(OpAndComp(ctx.getChild(0).getText()))
         return
 
-    def visitUppercase(self, ctx:uncontracted_brailleParser.UppercaseContext):
+    def visitUppercase(self, ctx: uncontracted_brailleParser.UppercaseContext):
         self.symbols.append(Alphabetic(ctx.getChild(0).getText()))
         return
 
-    def visitLowercase(self, ctx:uncontracted_brailleParser.LowercaseContext):
+    def visitLowercase(self, ctx: uncontracted_brailleParser.LowercaseContext):
         self.symbols.append(Alphabetic(ctx.getChild(0).getText()))
         return
 
-    def visitDigit(self, ctx:uncontracted_brailleParser.DigitContext):
+    def visitDigit(self, ctx: uncontracted_brailleParser.DigitContext):
         self.symbols.append(Numeral(ctx.getChild(0).getText()))
         return
-
-
-
-
-
