@@ -10,8 +10,8 @@ import threading
 PORT = 12345
 MAX_ROWS = 1
 MAX_COLUMNS = 20
-WINDOWS_WIDTH = 1100
-WINDOWS_HEIGHT = 250
+WINDOW_WIDTH = 1100
+WINDOW_HEIGHT = 250
 
 
 
@@ -100,7 +100,7 @@ class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Braille Cells")
-        self.geometry(f"{WINDOWS_WIDTH}x{WINDOWS_HEIGHT}")
+        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.cell_pages = []
         self.cells_on_page = []
         self.current_page = 0
