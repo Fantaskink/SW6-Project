@@ -10,6 +10,9 @@ import threading
 PORT = 12345
 MAX_ROWS = 1
 MAX_COLUMNS = 20
+WINDOWS_WIDTH = 1100
+WINDOWS_HEIGHT = 250
+
 
 
 class SocketHandler:
@@ -39,7 +42,6 @@ class SocketHandler:
                 continue
             finally:
                 conn.close()
-
 
 
 def get_cells(string):
@@ -98,12 +100,18 @@ class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Braille Cells")
-        self.geometry("1100x200")
+        self.geometry(f"{WINDOWS_WIDTH}x{WINDOWS_HEIGHT}")
         self.cell_pages = []
         self.cells_on_page = []
         self.current_page = 0
 
         self.updates_blocked = False
+
+        self.braille_keyboard_frame = tk.Frame(self)
+        self.braille_keyboard_frame.grid(row=2, column=0, columnspan=MAX_COLUMNS)
+        self.create_braille_keyboard()
+
+
 
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(row=1, column=0, columnspan=MAX_COLUMNS)
@@ -128,6 +136,18 @@ class MainWindow(tk.Tk):
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
         self.render_braille_cells(self.shared_string)
+
+    def create_braille_keyboard(self):
+        self.braille_buttons = []
+        for i in range(6):
+            button = tk.Button(self.braille_keyboard_frame, text=f"{i+1}", command=lambda i=i: self.braille_button_pressed(i))
+            button.grid(row=i % 3, column=i // 3)
+            self.braille_buttons.append(button)
+
+
+    def braille_button_pressed(self, i):
+        print(f"Braille button {i+1} pressed")
+
 
     def get_empty_widgets(self):
         widgets = []
