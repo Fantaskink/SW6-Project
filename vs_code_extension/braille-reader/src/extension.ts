@@ -49,8 +49,10 @@ export function activate(context: vscode.ExtensionContext) {
             const currentLineText = currentLine.text;
 
             if (socket && !socket.connecting) {
-                socket.write(currentLineText);
-                console.log('Sent:', currentLineText);
+                let line_number = position.line + 1;
+                let data = line_number + " " + currentLineText;
+                socket.write(data);
+                console.log('Sent:', data);
             }
         }
     });
