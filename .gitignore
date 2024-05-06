@@ -156,3 +156,4 @@ cython_debug/
 
 vs_code_extension/braille-reader/out
 node_modules/
+/gen/
