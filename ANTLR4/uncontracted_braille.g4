@@ -1,45 +1,44 @@
 grammar uncontracted_braille;
 
     text
-        :   (word | nonword)* EOF
-        ;
-
-    nonword
-        :   punctuation | grouping_punctuation | op_and_comp | currency_and_measurement
+        :   (word | space)* EOF
         ;
 
     word
-        :   sequence
+        :   (sequence | single)+
         ;
 
     sequence
-        :   (capital_sequence | capital_first_letter | numeral_sequence | lowercase_sequence)
+        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)
         ;
 
-
-    capital_first_letter
-        :   uppercase lowercase* (capital_sequence | capital_first_letter | numeral_sequence)?
+    single
+        :   lowercase | uppercase
         ;
 
     capital_sequence
-        :   uppercase uppercase+ (numeral_sequence | capital_terminator )?
+        :   uppercase uppercase+
         ;
 
     numeral_sequence
-        :   digit+ ('.' digit+ )* (capital_first_letter | capital_sequence | lowercase_sequence)?
-        ;
-
-    capital_terminator
-        :   lowercase_sequence
+        :   digit digit+
         ;
 
     lowercase_sequence
-        :   lowercase+ (capital_first_letter | capital_sequence | numeral_sequence)?
+        :   lowercase lowercase+
+        ;
+
+    symbol_sequence
+        :   punctuation | grouping_punctuation | op_and_comp | currency_and_measurement
         ;
 
     punctuation
         :    ',' | '.' | '\'' | ':' | '_' | '—' | '!' | '-' |
-             '?' | ';' | '...' | '/' | '\\' | '“' | '”' | '‘' | '’' | ' '
+             '?' | ';' | '...' | '/' | '\\' | '“' | '”' | '‘' | '’'
+        ;
+
+    space
+        :   ' '
         ;
 
     grouping_punctuation

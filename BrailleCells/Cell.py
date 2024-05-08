@@ -79,6 +79,14 @@ class NumeralIndicator:
         return f"Numeral Indicator: {self.cells}"
 
 
+class Grade1Indicator:
+    def __init__(self):
+        self.cells = [Cell([5, 6], "")]
+
+    def __str__(self):
+        return f"Grade 1 Indicator: {self.cells}"
+
+
 class Punctuation:
     def __init__(self, character):
         dots = self.get_dots(character)
