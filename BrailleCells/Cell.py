@@ -15,7 +15,7 @@ class CapitalWordIndicator:
         return f"Capital Word Indicator: {self.cells}"
 
 
-class CapitalTerminator:
+class CapitalsTerminator:
     def __init__(self):
         self.cells = [Cell([6], ","), Cell([3], "'")]
 

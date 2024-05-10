@@ -18,16 +18,16 @@ class CellGenerator(uncontracted_brailleVisitor):
                 cells.append(cell)
         return cells
 
-    def visitCapital_first_letter(self, ctx: uncontracted_brailleParser.Capital_first_letterContext):
-        self.symbols.append(CapitalFirstLetter())
-        return self.visitChildren(ctx)
+    def visitSpace(self, ctx:uncontracted_brailleParser.SpaceContext):
+        self.symbols.append(Punctuation(ctx.getChild(0).getText()))
+        return
 
     def visitCapital_sequence(self, ctx: uncontracted_brailleParser.Capital_sequenceContext):
         self.symbols.append(CapitalWordIndicator())
         return self.visitChildren(ctx)
 
-    def visitCapital_terminator(self, ctx: uncontracted_brailleParser.Capital_terminatorContext):
-        self.symbols.append(CapitalTerminator())
+    def visitCapitals_terminator(self, ctx: uncontracted_brailleParser.Capitals_terminatorContext):
+        self.symbols.append(CapitalsTerminator())
         return self.visitChildren(ctx)
 
     def visitNumeral_sequence(self, ctx: uncontracted_brailleParser.Numeral_sequenceContext):

@@ -13,23 +13,35 @@ grammar uncontracted_braille;
         ;
 
     single
-        :   lowercase | uppercase
+        :   capital_letter
+        ;
+
+    capital_letter
+        :   uppercase
         ;
 
     capital_sequence
-        :   uppercase uppercase+
+        :   uppercase uppercase+ capitals_terminator?
+        ;
+
+    capitals_terminator
+        :   lowercase_sequence
         ;
 
     numeral_sequence
-        :   digit digit+
+        :   digit+ grade_1_mode?
+        ;
+
+    grade_1_mode
+        :   lowercase_sequence
         ;
 
     lowercase_sequence
-        :   lowercase lowercase+
+        :   lowercase+
         ;
 
     symbol_sequence
-        :   punctuation | grouping_punctuation | op_and_comp | currency_and_measurement
+        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
         ;
 
     punctuation
