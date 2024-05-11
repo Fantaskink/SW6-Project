@@ -7,7 +7,7 @@ let reconnectInterval: NodeJS.Timeout | undefined;
 
 const connectToServer = () => {
     // If already connected, do nothing
-    if (socket && socket.connecting) {
+    if (socket && socket.writable) {
         return;
     }
 
@@ -29,8 +29,8 @@ const connectToServer = () => {
         }
     });
 
-    socket.on('close', () => {
-        console.log('Disconnected from the server');
+    socket.on('close', (had_error) => {
+        console.log(`Socket closed, had_error: ${had_error}`);
         // If not already trying to reconnect, start trying
         if (!reconnectInterval) {
             reconnectInterval = setInterval(connectToServer, 5000); // Retry every 5 seconds

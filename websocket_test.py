@@ -38,10 +38,10 @@ async def echo(websocket, path):
     async for message in websocket:
         data = json.loads(message)
         if data['type'] == 'image':
-            await display_image(data['content'])
+            await ocr_image(data['content'])
 
 
-async def display_image(data_url):
+async def ocr_image(data_url):
     # Split the 'data:image/jpeg;base64,' part from the actual image data
     mime, base64_string = data_url.split(',')
 

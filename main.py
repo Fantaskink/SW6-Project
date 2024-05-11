@@ -24,9 +24,9 @@ class SocketHandler:
         self.main_window = main_window
 
     def listen_for_data(self):
-        while True:
-            try:
-                conn, addr = self.sock.accept()
+        try:
+            conn, addr = self.sock.accept()
+            while True:
                 data = conn.recv(1024)
                 if not data:
                     break
@@ -35,12 +35,11 @@ class SocketHandler:
                     print(string)
                     self.shared_string = string
                     self.main_window.render_braille_cells(string)
-            except Exception as e:
-                print(f"Error: {e}")
-                print("Attempting to reconnect...")
-                continue
-            finally:
-                conn.close()
+        except Exception as e:
+            print(f"Error: {e}")
+            print("Attempting to reconnect...")
+        finally:
+            conn.close()
 
 
 def get_cells(string):
