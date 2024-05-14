@@ -13,6 +13,9 @@ MAX_COLUMNS = 20
 WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 250
 
+PROGRAMMING_CONTEXT = 0
+LITERARY_CONTEXT = 1
+
 
 class SocketHandler:
     def __init__(self, shared_string, main_window):
@@ -105,6 +108,8 @@ class MainWindow(tk.Tk):
 
         self.updates_blocked = False
 
+        self.current_context = 0
+
         self.braille_keyboard_frame = tk.Frame(self)
         self.braille_keyboard_frame.grid(row=2, column=0, columnspan=MAX_COLUMNS)
         self.create_braille_keyboard()
@@ -123,6 +128,9 @@ class MainWindow(tk.Tk):
         self.block_updates_button = tk.Button(self.button_frame, text="Unlocked", command=self.block_updates)
         self.block_updates_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
 
+        self.context_button = tk.Button(self.button_frame, text="Literary Context", command=self.switch_context)
+        self.context_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 2, sticky=tk.E)
+
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
@@ -132,6 +140,14 @@ class MainWindow(tk.Tk):
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
         self.render_braille_cells(self.shared_string)
+
+    def switch_context(self):
+        if self.current_context == PROGRAMMING_CONTEXT:
+            self.current_context = LITERARY_CONTEXT
+            self.context_button.config(text="Literary Context")
+        else:
+            self.current_context = PROGRAMMING_CONTEXT
+            self.context_button.config(text="Programming Context")
 
     def create_braille_keyboard(self):
         self.braille_buttons = []
