@@ -49,8 +49,12 @@ export function activate(context: vscode.ExtensionContext) {
             const currentLineText = currentLine.text;
 
             if (socket && !socket.connecting) {
-                let line_number = position.line + 1;
-                let data = line_number + " " + currentLineText;
+                let data = JSON.stringify({
+                    type: 'vscode',
+                    line_number: position.line + 1,
+                    cursor_position: position.character,
+                    line_text: currentLineText
+                });
                 socket.write(data);
                 console.log('Sent:', data);
             }

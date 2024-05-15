@@ -6,6 +6,7 @@ from CellGenerator import CellGenerator
 from tts import pronounce_letters
 import socket
 import threading
+import json
 
 PORT = 12345
 MAX_ROWS = 1
@@ -13,8 +14,20 @@ MAX_COLUMNS = 20
 WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 250
 
-PROGRAMMING_CONTEXT = 0
-LITERARY_CONTEXT = 1
+VSCODE = 0
+TEXT = 1
+
+
+def get_target_string(json_data):
+    data_type = json_data['type']
+
+    if data_type == 'vscode':
+        line_number = json_data['line_number']
+        line_text = json_data['line_text']
+        target_string = f"{line_number}: {line_text}"
+        return target_string
+    elif data_type == 'text':
+        return json_data['content']
 
 
 class SocketHandler:
@@ -33,11 +46,10 @@ class SocketHandler:
                 data = conn.recv(1024)
                 if not data:
                     break
-                string = data.decode('utf-8')
-                if len(string) > 0:
-                    print(string)
-                    self.shared_string = string
-                    self.main_window.render_braille_cells(string)
+                json_data = json.loads(data.decode('utf-8'))
+                if json_data:
+                    self.shared_string = get_target_string(json_data)
+                    self.main_window.render_braille_cells(self.shared_string)
         except Exception as e:
             print(f"Error: {e}")
             print("Attempting to reconnect...")
@@ -108,8 +120,6 @@ class MainWindow(tk.Tk):
 
         self.updates_blocked = False
 
-        self.current_context = 0
-
         self.braille_keyboard_frame = tk.Frame(self)
         self.braille_keyboard_frame.grid(row=2, column=0, columnspan=MAX_COLUMNS)
         self.create_braille_keyboard()
@@ -128,9 +138,6 @@ class MainWindow(tk.Tk):
         self.block_updates_button = tk.Button(self.button_frame, text="Unlocked", command=self.block_updates)
         self.block_updates_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 1, sticky=tk.E)
 
-        self.context_button = tk.Button(self.button_frame, text="Literary Context", command=self.switch_context)
-        self.context_button.grid(row=MAX_ROWS + 1, column=MAX_COLUMNS // 2 + 2, sticky=tk.E)
-
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
@@ -140,14 +147,6 @@ class MainWindow(tk.Tk):
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
         self.render_braille_cells(self.shared_string)
-
-    def switch_context(self):
-        if self.current_context == PROGRAMMING_CONTEXT:
-            self.current_context = LITERARY_CONTEXT
-            self.context_button.config(text="Literary Context")
-        else:
-            self.current_context = PROGRAMMING_CONTEXT
-            self.context_button.config(text="Programming Context")
 
     def create_braille_keyboard(self):
         self.braille_buttons = []

@@ -1,11 +1,34 @@
 grammar contracted_braille;
 
     text
-        :   (word | space)* EOF
+        :   (word (space word)*)?  EOF
         ;
 
     word
-        :   (sequence | single)+ | ()
+        :   (standing_alone | (sequence | single)+)
+        ;
+
+    standing_alone
+        :   standing_alone_letters_sequence | standing_alone_single
+        ;
+
+    standing_alone_letters_sequence
+        :   standing_alone_connector? single (standing_alone_connector single)+
+        ;
+
+    standing_alone_single
+        :   single | alphabetic_wordsign
+        ;
+
+    standing_alone_connector
+        :   '-' | '–' | '—'
+        ;
+
+    alphabetic_wordsign
+        :   'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
+            'have' | 'just' | 'knowledge' | 'like' | 'more' |
+            'not' | 'people' | 'quite' | 'rather' | 'so' |
+            'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
         ;
 
     sequence
@@ -13,11 +36,15 @@ grammar contracted_braille;
         ;
 
     single
-        :   capital_letter
+        :   capital_letter | lowercase_letter
         ;
 
     capital_letter
         :   uppercase
+        ;
+
+    lowercase_letter
+        :   lowercase
         ;
 
     capital_sequence
