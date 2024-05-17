@@ -5,7 +5,7 @@ grammar contracted_braille;
         ;
 
     word
-        :   (standing_alone | sequence | single)+
+        :   standing_alone | sequence+ | single+
         ;
 
     standing_alone
@@ -13,11 +13,16 @@ grammar contracted_braille;
         ;
 
     standing_alone_letters_sequence
-        :   standing_alone_connector? (StrongContraction+ | lowercase_sequence | capital_sequence)+ (standing_alone_connector standing_alone+)*
+        :   standing_alone_connector? standing_alone_sequence_part+ (standing_alone_connector standing_alone_letters_sequence+)* symbol_sequence?
+        ;
+
+    standing_alone_sequence_part
+        :   lowercase_sequence
+        |   capital_sequence
         ;
 
     standing_alone_single
-        :   single | AlphabeticWordsign | StrongContraction
+        :   single | AlphabeticWordsign | StrongContractionL
         ;
 
     standing_alone_connector
@@ -25,19 +30,26 @@ grammar contracted_braille;
         ;
 
     sequence
-        : StrongContraction
-        | capital_sequence
+        : capital_sequence
         | numeral_sequence
         | lowercase_sequence
         | symbol_sequence
         ;
 
     single
-        :   CapitalLetter | LowercaseLetter
+        :   StrongContractionF | CapitalLetter | LowercaseLetter
         ;
 
-    StrongContraction
+    StrongContractionL
         :   'and' | 'for' | 'of' | 'the' | 'with'
+        ;
+
+    StrongContractionC
+        :   'AND' | 'FOR' | 'OF' | 'THE' | 'WITH'
+        ;
+
+    StrongContractionF
+        :   'And' | 'For' | 'Of' | 'The' | 'With'
         ;
 
     CapitalLetter
@@ -49,7 +61,7 @@ grammar contracted_braille;
         ;
 
     capital_sequence
-        :   CapitalLetter CapitalLetter+ capitals_terminator?
+        :   (StrongContractionC | CapitalLetter) (StrongContractionC | CapitalLetter)+ capitals_terminator?
         ;
 
     AlphabeticWordsign
@@ -59,23 +71,21 @@ grammar contracted_braille;
             'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
         ;
 
-    StrongWordsigns
-        :   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
-        ;
+    //StrongWordsigns
+        //:   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
+        //;
 
-
-
-    StrongGroupsign
-        :   'ch' | 'gh' | 'sh' | 'th' | 'wh' | 'ed' | 'er' | 'ou' |
-            'ow' | 'st' | 'ing' | 'ar'
-        ;
+    //StrongGroupsign
+        //:   'ch' | 'gh' | 'sh' | 'th' | 'wh' | 'ed' | 'er' | 'ou' |
+        //    'ow' | 'st' | 'ing' | 'ar'
+        //;
 
     capitals_terminator
         :   lowercase_sequence
         ;
 
     numeral_sequence
-        :   digit+ grade_1_mode?
+        :   digit+ ('.' digit+)* grade_1_mode?
         ;
 
     grade_1_mode
@@ -83,8 +93,9 @@ grammar contracted_braille;
         ;
 
     lowercase_sequence
-        :  LowercaseLetter+
+        :  (LowercaseLetter | StrongContractionL)+
         ;
+
 
     symbol_sequence
         :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
