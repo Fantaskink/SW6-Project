@@ -1,11 +1,11 @@
 grammar contracted_braille;
 
     text
-        :   (word (space word)*)?  EOF
+        :   space* (word (space word?)*)?  EOF
         ;
 
     word
-        :   (standing_alone | (sequence | single)+)
+        :   standing_alone | sequence | single+
         ;
 
     standing_alone
@@ -13,46 +13,53 @@ grammar contracted_braille;
         ;
 
     standing_alone_letters_sequence
-        :   standing_alone_connector? single (standing_alone_connector single)+
+        :   standing_alone_connector? Lowercase_sequence | (standing_alone_connector Lowercase_sequence)*
         ;
 
     standing_alone_single
-        :   single | alphabetic_wordsign
+        :   single | Alphabetic_wordsign
         ;
 
     standing_alone_connector
         :   '-' | '–' | '—'
         ;
 
-    alphabetic_wordsign
+    sequence
+        : Capital_sequence
+        | numeral_sequence
+        | Lowercase_sequence
+        | symbol_sequence
+        ;
+
+    single
+        :   Capital_letter | Lowercase_letter
+        ;
+
+    Capital_letter
+        :   Uppercase
+        ;
+
+    Lowercase_letter
+        :   Lowercase
+        ;
+
+    Capital_sequence
+        :   Uppercase Uppercase+ Capitals_terminator?
+        ;
+
+    Alphabetic_wordsign
         :   'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
             'have' | 'just' | 'knowledge' | 'like' | 'more' |
             'not' | 'people' | 'quite' | 'rather' | 'so' |
             'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
         ;
 
-    sequence
-        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)
+    StrongWordsigns
+        :   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
         ;
 
-    single
-        :   capital_letter | lowercase_letter
-        ;
-
-    capital_letter
-        :   uppercase
-        ;
-
-    lowercase_letter
-        :   lowercase
-        ;
-
-    capital_sequence
-        :   uppercase uppercase+ capitals_terminator?
-        ;
-
-    capitals_terminator
-        :   lowercase_sequence
+    fragment Capitals_terminator
+        :   Lowercase_sequence
         ;
 
     numeral_sequence
@@ -60,11 +67,11 @@ grammar contracted_braille;
         ;
 
     grade_1_mode
-        :   lowercase_sequence
+        :   Lowercase_sequence
         ;
 
-    lowercase_sequence
-        :   lowercase+
+    Lowercase_sequence
+        :  Lowercase+
         ;
 
     symbol_sequence
@@ -92,23 +99,15 @@ grammar contracted_braille;
         :   '€' | '$' | '£'
         ;
 
-    lowercase
-        :   Lowercase
-        ;
-
-    uppercase
-        :   Uppercase
-        ;
-
     digit
         :   Digit
         ;
 
-    Lowercase
+    fragment Lowercase
         :   [a-z]
         ;
 
-    Uppercase
+    fragment Uppercase
         :   [A-Z]
         ;
 
