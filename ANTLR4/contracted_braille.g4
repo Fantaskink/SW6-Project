@@ -1,11 +1,11 @@
 grammar contracted_braille;
 
     text
-        :   space* (word (space word?)*)?  EOF
+        :   space* (word (space+ word?)*)?  EOF
         ;
 
     word
-        :   standing_alone | sequence | single+
+        :   standing_alone | sequence | single
         ;
 
     standing_alone
@@ -13,11 +13,11 @@ grammar contracted_braille;
         ;
 
     standing_alone_letters_sequence
-        :   standing_alone_connector? Lowercase_sequence | (standing_alone_connector Lowercase_sequence)*
+        :   standing_alone_connector? (LowercaseSequence | capital_sequence) (standing_alone_connector standing_alone+)*
         ;
 
     standing_alone_single
-        :   single | Alphabetic_wordsign
+        :   single | AlphabeticWordsign
         ;
 
     standing_alone_connector
@@ -25,29 +25,29 @@ grammar contracted_braille;
         ;
 
     sequence
-        : Capital_sequence
+        : capital_sequence
         | numeral_sequence
-        | Lowercase_sequence
+        | LowercaseSequence
         | symbol_sequence
         ;
 
     single
-        :   Capital_letter | Lowercase_letter
+        :   CapitalLetter | LowercaseLetter
         ;
 
-    Capital_letter
+    CapitalLetter
         :   Uppercase
         ;
 
-    Lowercase_letter
+    LowercaseLetter
         :   Lowercase
         ;
 
-    Capital_sequence
-        :   Uppercase Uppercase+ Capitals_terminator?
+    capital_sequence
+        :   CapitalLetter CapitalLetter+ capitals_terminator?
         ;
 
-    Alphabetic_wordsign
+    AlphabeticWordsign
         :   'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
             'have' | 'just' | 'knowledge' | 'like' | 'more' |
             'not' | 'people' | 'quite' | 'rather' | 'so' |
@@ -58,8 +58,8 @@ grammar contracted_braille;
         :   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
         ;
 
-    fragment Capitals_terminator
-        :   Lowercase_sequence
+    capitals_terminator
+        :   LowercaseSequence
         ;
 
     numeral_sequence
@@ -67,10 +67,10 @@ grammar contracted_braille;
         ;
 
     grade_1_mode
-        :   Lowercase_sequence
+        :   LowercaseSequence
         ;
 
-    Lowercase_sequence
+    LowercaseSequence
         :  Lowercase+
         ;
 
