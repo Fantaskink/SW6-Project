@@ -1,11 +1,11 @@
 grammar contracted_braille;
 
     text
-        :   space* (word (space+ word?)*)?  EOF
+        :   (space* word (space+ word?)*)? EOF
         ;
 
     word
-        :   standing_alone | sequence | single
+        :   (standing_alone | sequence | single)+
         ;
 
     standing_alone
@@ -13,11 +13,11 @@ grammar contracted_braille;
         ;
 
     standing_alone_letters_sequence
-        :   standing_alone_connector? (LowercaseSequence | capital_sequence) (standing_alone_connector standing_alone+)*
+        :   standing_alone_connector? (StrongContraction+ | lowercase_sequence | capital_sequence)+ (standing_alone_connector standing_alone+)*
         ;
 
     standing_alone_single
-        :   single | AlphabeticWordsign
+        :   single | AlphabeticWordsign | StrongContraction
         ;
 
     standing_alone_connector
@@ -25,14 +25,19 @@ grammar contracted_braille;
         ;
 
     sequence
-        : capital_sequence
+        : StrongContraction
+        | capital_sequence
         | numeral_sequence
-        | LowercaseSequence
+        | lowercase_sequence
         | symbol_sequence
         ;
 
     single
         :   CapitalLetter | LowercaseLetter
+        ;
+
+    StrongContraction
+        :   'and' | 'for' | 'of' | 'the' | 'with'
         ;
 
     CapitalLetter
@@ -58,8 +63,15 @@ grammar contracted_braille;
         :   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
         ;
 
+
+
+    StrongGroupsign
+        :   'ch' | 'gh' | 'sh' | 'th' | 'wh' | 'ed' | 'er' | 'ou' |
+            'ow' | 'st' | 'ing' | 'ar'
+        ;
+
     capitals_terminator
-        :   LowercaseSequence
+        :   lowercase_sequence
         ;
 
     numeral_sequence
@@ -67,11 +79,11 @@ grammar contracted_braille;
         ;
 
     grade_1_mode
-        :   LowercaseSequence
+        :   lowercase_sequence
         ;
 
-    LowercaseSequence
-        :  Lowercase+
+    lowercase_sequence
+        :  LowercaseLetter+
         ;
 
     symbol_sequence
