@@ -26,8 +26,16 @@ class CellGenerator(uncontracted_brailleVisitor):
         self.signs.append(CapitalWordIndicator())
         return self.visitChildren(ctx)
 
+    def visitCapital_letter(self, ctx: uncontracted_brailleParser.Capital_letterContext):
+        self.signs.append(CapitalFirstLetter())
+        return self.visitChildren(ctx)
+
     def visitCapitals_terminator(self, ctx: uncontracted_brailleParser.Capitals_terminatorContext):
         self.signs.append(CapitalsTerminator())
+        return self.visitChildren(ctx)
+
+    def visitGrade_1_mode(self, ctx:uncontracted_brailleParser.Grade_1_modeContext):
+        self.signs.append(Grade1Indicator())
         return self.visitChildren(ctx)
 
     def visitNumeral_sequence(self, ctx: uncontracted_brailleParser.Numeral_sequenceContext):
