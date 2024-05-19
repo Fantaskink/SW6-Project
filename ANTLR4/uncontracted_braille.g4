@@ -58,7 +58,7 @@ grammar uncontracted_braille;
         ;
 
     op_and_comp
-        :   '+' | '=' | '*'
+        :   '+' | '=' | '*' | '^'
         ;
 
     currency_and_measurement
