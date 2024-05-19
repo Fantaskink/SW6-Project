@@ -29,7 +29,11 @@ grammar uncontracted_braille;
         ;
 
     numeral_sequence
-        :   digit+ grade_1_mode?
+        :   digit+ (numeral_separator digit+)* grade_1_mode?
+        ;
+
+    numeral_separator
+        :   ',' | '.'
         ;
 
     grade_1_mode

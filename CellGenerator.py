@@ -42,6 +42,9 @@ class CellGenerator(uncontracted_brailleVisitor):
         self.signs.append(NumeralIndicator())
         return self.visitChildren(ctx)
 
+    def visitNumeral_separator(self, ctx:uncontracted_brailleParser.Numeral_separatorContext):
+        self.signs.append(Punctuation(ctx.getChild(0).getText()))
+
     def visitPunctuation(self, ctx: uncontracted_brailleParser.PunctuationContext):
         self.signs.append(Punctuation(ctx.getChild(0).getText()))
         return
