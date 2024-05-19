@@ -34,15 +34,15 @@ class CellGenerator(uncontracted_brailleVisitor):
         self.signs.append(CapitalsTerminator())
         return self.visitChildren(ctx)
 
-    def visitGrade_1_mode(self, ctx:uncontracted_brailleParser.Grade_1_modeContext):
-        self.signs.append(Grade1Indicator())
+    def visitGrade_1_terminator(self, ctx: uncontracted_brailleParser.Grade_1_terminatorContext):
+        self.signs.append(Grade1Terminator())
         return self.visitChildren(ctx)
 
     def visitNumeral_sequence(self, ctx: uncontracted_brailleParser.Numeral_sequenceContext):
         self.signs.append(NumeralIndicator())
         return self.visitChildren(ctx)
 
-    def visitNumeral_separator(self, ctx:uncontracted_brailleParser.Numeral_separatorContext):
+    def visitNumeral_separator(self, ctx: uncontracted_brailleParser.Numeral_separatorContext):
         self.signs.append(Punctuation(ctx.getChild(0).getText()))
 
     def visitPunctuation(self, ctx: uncontracted_brailleParser.PunctuationContext):

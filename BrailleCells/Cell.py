@@ -79,9 +79,9 @@ class NumeralIndicator:
         return f"Numeral Indicator: {self.cells}"
 
 
-class Grade1Indicator:
+class Grade1Terminator:
     def __init__(self):
-        self.cells = [Cell([5, 6], "")]
+        self.cells = [Cell([5, 6], "Grade 1"), Cell([3], "terminator")]
 
     def __str__(self):
         return f"Grade 1 Indicator: {self.cells}"

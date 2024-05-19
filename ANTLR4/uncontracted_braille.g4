@@ -29,14 +29,14 @@ grammar uncontracted_braille;
         ;
 
     numeral_sequence
-        :   digit+ (numeral_separator digit+)* grade_1_mode?
+        :   digit+ (numeral_separator digit+)* grade_1_terminator?
         ;
 
     numeral_separator
         :   ',' | '.'
         ;
 
-    grade_1_mode
+    grade_1_terminator
         :   lowercase_sequence
         ;
 
