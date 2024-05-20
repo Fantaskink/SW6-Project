@@ -13,7 +13,7 @@ grammar contracted_braille;
         ;
 
     standing_alone_letters_sequence
-        :   standing_alone_connector? standing_alone_sequence_part+ (standing_alone_connector standing_alone_letters_sequence+)* symbol_sequence?
+        :   standing_alone_connector? standing_alone_sequence_part+ (standing_alone_connector standing_alone_sequence_part+)* symbol_sequence?
         ;
 
     standing_alone_sequence_part
@@ -22,7 +22,7 @@ grammar contracted_braille;
         ;
 
     standing_alone_single
-        :   single | AlphabeticWordsign | StrongContractionL
+        :   single | wordsign | StrongContractionL
         ;
 
     standing_alone_connector
@@ -37,7 +37,7 @@ grammar contracted_braille;
         ;
 
     single
-        :   StrongContractionF | CapitalLetter | LowercaseLetter
+        :   StrongContractionF | CapitalLetter
         ;
 
     StrongContractionL
@@ -64,12 +64,7 @@ grammar contracted_braille;
         :   (StrongContractionC | CapitalLetter) (StrongContractionC | CapitalLetter)+ capitals_terminator?
         ;
 
-    AlphabeticWordsign
-        :   'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
-            'have' | 'just' | 'knowledge' | 'like' | 'more' |
-            'not' | 'people' | 'quite' | 'rather' | 'so' |
-            'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
-        ;
+
 
     //StrongWordsigns
         //:   'child' | 'shall' | 'this' | 'which' | 'out' | 'still'
@@ -132,6 +127,18 @@ grammar contracted_braille;
 
     fragment Uppercase
         :   [A-Z]
+        ;
+
+    wordsign
+        :   AlphabeticWordsign
+        ;
+
+
+    AlphabeticWordsign
+        :   'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
+            'have' | 'just' | 'knowledge' | 'like' | 'more' |
+            'not' | 'people' | 'quite' | 'rather' | 'so' |
+            'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
         ;
 
     Digit
