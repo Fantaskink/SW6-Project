@@ -36,6 +36,7 @@ def get_target_string(json_data: dict) -> str:
 class SocketHandler:
     def __init__(self, shared_string, main_window):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('localhost', PORT))
         self.sock.listen(1)
 
@@ -56,14 +57,16 @@ class SocketHandler:
             print(f"Error: {e}")
             print("Attempting to reconnect...")
         finally:
-            conn.close()
+            if conn:
+                conn.close()
+            self.sock.close()
 
 
 def get_cells(json_object: dict) -> list:
     string = get_target_string(json_object)
     is_contracted = json_object['is_contracted']
 
-    string = "you! are a good person"
+    string = "Test!"
 
     input_stream = InputStream(string)
 
@@ -79,6 +82,10 @@ def get_cells(json_object: dict) -> list:
         lexer = uncontracted_brailleLexer(input_stream)
         token_stream = CommonTokenStream(lexer)
         parser = uncontracted_brailleParser(token_stream)
+
+    token_stream.fill()
+    for token in token_stream.tokens:
+        print(token)
 
     ast = parser.text()
 

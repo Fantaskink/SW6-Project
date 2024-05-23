@@ -9,11 +9,19 @@ options {
         ;
 
     word
-        :    (sequence | single)+ | alphabetic_wordsign
+        :    (sequence | single)+ | wordsign
+        ;
+
+    wordsign
+        :   alphabetic_wordsign | strong_wordsign
         ;
 
     alphabetic_wordsign
-        :   ALPHABETIC_WORDSIGN
+        :   ALPHABETIC_WORDSIGN_L | ALPHABETIC_WORDSIGN_F | ALPHABETIC_WORDSIGN_C
+        ;
+
+    strong_wordsign
+        :   STRONG_WORDSIGN_L | STRONG_WORDSIGN_F | STRONG_WORDSIGN_C
         ;
 
     sequence
@@ -53,15 +61,15 @@ options {
         ;
 
     strong_contraction_l
-        :   SC_L_AND | SC_L_FOR | SC_L_OF | SC_L_THE | SC_L_WITH
+        :   STRONG_CONTRACTION_L
         ;
 
     strong_contraction_f
-        :   SC_F_AND | SC_F_FOR | SC_F_OF | SC_F_THE | SC_F_WITH
+        :   STRONG_CONTRACTION_F
         ;
 
     strong_contraction_c
-        :   SC_C_AND | SC_C_FOR | SC_C_OF | SC_C_THE | SC_C_WITH
+        :   STRONG_CONTRACTION_C
         ;
 
     symbol_sequence

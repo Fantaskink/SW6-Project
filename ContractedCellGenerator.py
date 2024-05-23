@@ -53,8 +53,33 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
         self.signs.append(GroupingPunctuation(ctx.getChild(0).getText()))
         return
 
-    def visitAlphabetic_wordsign(self, ctx:contracted_braille_parser.Alphabetic_wordsignContext):
+    def visitAlphabetic_wordsign(self, ctx: contracted_braille_parser.Alphabetic_wordsignContext):
+        if ctx.ALPHABETIC_WORDSIGN_F():
+            self.signs.append(CapitalFirstLetter())
+        if ctx.ALPHABETIC_WORDSIGN_C():
+            self.signs.append(CapitalWordIndicator())
         self.signs.append(AlphabeticWordSign(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_wordsign(self, ctx: contracted_braille_parser.Strong_wordsignContext):
+        if ctx.STRONG_WORDSIGN_F():
+            self.signs.append(CapitalFirstLetter())
+        if ctx.STRONG_WORDSIGN_C():
+            self.signs.append(CapitalWordIndicator())
+        self.signs.append(StrongWordsign(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_contraction_f(self, ctx: contracted_braille_parser.Strong_contraction_fContext):
+        self.signs.append(CapitalFirstLetter())
+        self.signs.append(StrongContraction(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_contraction_c(self, ctx: contracted_braille_parser.Strong_contraction_cContext):
+        self.signs.append(StrongContraction(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_contraction_l(self, ctx: contracted_braille_parser.Strong_contraction_lContext):
+        self.signs.append(StrongContraction(ctx.getChild(0).getText()))
         return
 
     def visitOp_and_comp(self, ctx: contracted_braille_parser.Op_and_compContext):

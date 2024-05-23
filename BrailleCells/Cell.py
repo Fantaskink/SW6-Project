@@ -191,7 +191,7 @@ class OpAndComp:
 # Cells for contracted braille
 class AlphabeticWordSign:
     def __init__(self, string):
-        self.cells = [Cell(self.get_dots(string), string)]
+        self.cells = [Cell(self.get_dots(string.lower()), string.lower())]
 
     def __str__(self):
         return f"Alphabetic Word Sign: {self.cells}"
@@ -221,5 +221,42 @@ class AlphabeticWordSign:
             "you": [1, 3, 4, 5, 6],
             "as": [1, 3, 5, 6],
             "will": [2, 4, 5, 6],
+        }
+        return binary_dict[string]
+
+
+class StrongContraction:
+    def __init__(self, string):
+        self.cells = [Cell(self.get_dots(string.lower()), string.lower())]
+
+    def __str__(self):
+        return f"Strong Contraction: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            "and": [1, 2, 3, 4, 6],
+            "for": [1, 2, 3, 4, 5, 6],
+            "of": [1, 2, 3, 5, 6],
+            "the": [2, 3, 4, 6],
+            "with": [2, 3, 4, 5, 6]
+        }
+        return binary_dict[string]
+
+
+class StrongWordsign:
+    def __init__(self, string):
+        self.cells = [Cell(self.get_dots(string.lower()), string.lower())]
+
+    def __str__(self):
+        return f"Strong Wordsign: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            "child": [1, 6],
+            "shall": [1, 4, 6],
+            "this": [1, 4, 5, 6],
+            "which": [1, 5, 6],
+            "out": [1, 2, 5, 6],
+            "still": [1, 4],
         }
         return binary_dict[string]

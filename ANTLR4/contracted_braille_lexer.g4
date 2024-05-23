@@ -10,7 +10,7 @@ def not_alnum_after(self):
     return not next_char.isalnum()
 }
 
-ALPHABETIC_WORDSIGN
+ALPHABETIC_WORDSIGN_L
     :   {self.not_alnum_before()}?
         ('but' | 'can' | 'do' | 'every' | 'from' | 'go' |
          'have' | 'just' | 'knowledge' | 'like' | 'more' |
@@ -19,7 +19,56 @@ ALPHABETIC_WORDSIGN
         {self.not_alnum_after()}?
     ;
 
+ALPHABETIC_WORDSIGN_C
+    :   {self.not_alnum_before()}?
+        ('BUT' | 'CAN' | 'DO' | 'EVERY' | 'FROM' | 'GO' |
+         'HAVE' | 'JUST' | 'KNOWLEDGE' | 'LIKE' | 'MORE' |
+         'NOT' | 'PEOPLE' | 'QUITE' | 'RATHER' | 'SO' |
+         'THAT' | 'US' | 'VERY' | 'WILL' | 'IT' | 'YOU' | 'AS')
+        {self.not_alnum_after()}?
+    ;
 
+ALPHABETIC_WORDSIGN_F
+    :   {self.not_alnum_before()}?
+        ('But' | 'Can' | 'Do' | 'Every' | 'From' | 'Go' |
+         'Have' | 'Just' | 'Knowledge' | 'Like' | 'More' |
+         'Not' | 'People' | 'Quite' | 'Rather' | 'So' |
+         'That' | 'Us' | 'Very' | 'Will' | 'It' | 'You' | 'As')
+        {self.not_alnum_after()}?
+    ;
+
+STRONG_WORDSIGN_L
+    :   {self.not_alnum_before()}?
+        ('child' | 'shall' | 'this' | 'which' | 'out' | 'still')
+        {self.not_alnum_after()}?
+    ;
+
+STRONG_WORDSIGN_C
+    :   {self.not_alnum_before()}?
+        ('CHILD' | 'SHALL' | 'THIS' | 'WHICH' | 'OUT' | 'STILL')
+        {self.not_alnum_after()}?
+    ;
+
+STRONG_WORDSIGN_F
+    :   {self.not_alnum_before()}?
+        ('Child' | 'Shall' | 'This' | 'Which' | 'Out' | 'Still')
+        {self.not_alnum_after()}?
+    ;
+
+STRONG_CONTRACTION_L
+    :
+        'and' | 'for' | 'of' | 'the' | 'with'
+    ;
+
+STRONG_CONTRACTION_C
+    :
+        'AND' | 'FOR' | 'OF' | 'THE' | 'WITH'
+    ;
+
+STRONG_CONTRACTION_F
+    :
+        'And' | 'For' | 'Of' | 'The' | 'With'
+    ;
 
 DOT : '.';
 COMMA : ',';
@@ -55,24 +104,6 @@ CARET : '^';
 EURO : '€';
 DOLLAR : '$';
 POUND : '£';
-
-SC_L_AND : 'and';
-SC_L_FOR : 'for';
-SC_L_OF : 'of';
-SC_L_THE : 'the';
-SC_L_WITH : 'with';
-
-SC_F_AND : 'And';
-SC_F_FOR : 'For';
-SC_F_OF : 'Of';
-SC_F_THE : 'The';
-SC_F_WITH : 'With';
-
-SC_C_AND : 'AND';
-SC_C_FOR : 'FOR';
-SC_C_OF : 'OF';
-SC_C_THE : 'THE';
-SC_C_WITH : 'WITH';
 
 
     Lowercase

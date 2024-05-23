@@ -1,7 +1,7 @@
 grammar uncontracted_braille;
 
     text
-        :   (word | space)* EOF
+        :   (space* word (space+ word?)*)* EOF
         ;
 
     word
@@ -9,7 +9,7 @@ grammar uncontracted_braille;
         ;
 
     sequence
-        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)
+        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbols_sequence)
         ;
 
     single
@@ -25,7 +25,7 @@ grammar uncontracted_braille;
         ;
 
     capitals_terminator
-        :   lowercase_sequence
+        :   lowercase_sequence | symbols_sequence
         ;
 
     numeral_sequence
@@ -44,13 +44,14 @@ grammar uncontracted_braille;
         :   lowercase+
         ;
 
-    symbol_sequence
+    symbols_sequence
         :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
         ;
 
     punctuation
         :    ',' | '.' | '\'' | ':' | '_' | '—' | '!' | '-' |
-             '?' | ';' | '...' | '/' | '\\' | '“' | '”' | '‘' | '’'
+             '?' | ';' | '...' | '/' | '\\' | '“' | '”' | '‘' | '’' |
+             '"'
         ;
 
     space
