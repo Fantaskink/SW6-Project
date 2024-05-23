@@ -53,7 +53,9 @@ export function activate(context: vscode.ExtensionContext) {
                     type: 'vscode',
                     line_number: position.line + 1,
                     cursor_position: position.character,
-                    line_text: currentLineText
+                    line_text: currentLineText,
+                    is_contracted: false
+
                 });
                 socket.write(data);
                 console.log('Sent:', data);

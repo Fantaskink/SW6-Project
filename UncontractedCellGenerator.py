@@ -4,7 +4,7 @@ from gen.uncontracted_brailleParser import uncontracted_brailleParser
 from BrailleCells.Cell import *
 
 
-class CellGenerator(uncontracted_brailleVisitor):
+class UncontractedCellGenerator(uncontracted_brailleVisitor):
     def __init__(self):
         self.signs = []
 

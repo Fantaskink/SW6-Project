@@ -90,11 +90,11 @@ class Grade1Terminator:
 class Punctuation:
     def __init__(self, character):
         dots = self.get_dots(character)
-        if not dots: # If character is a space
+        if not dots:  # If character is a space
             self.cells = [Cell([], character)]
-        elif isinstance(dots[0], list): # If character has multiple cells
+        elif isinstance(dots[0], list):  # If character has multiple cells
             self.cells = [Cell(dots[0], character), Cell(dots[1], character)]
-        else: # If character has only one cell
+        else:  # If character has only one cell
             self.cells = [Cell(self.get_dots(character), character)]
 
     def __str__(self):
@@ -186,3 +186,40 @@ class OpAndComp:
             '^': [[4], [2, 6]],
         }
         return binary_dict[character]
+
+
+# Cells for contracted braille
+class AlphabeticWordSign:
+    def __init__(self, string):
+        self.cells = [Cell(self.get_dots(string), string)]
+
+    def __str__(self):
+        return f"Alphabetic Word Sign: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            "but": [1, 2],
+            "can": [1, 4],
+            "do": [1, 4, 5],
+            "every": [1, 5],
+            "from": [1, 2, 4],
+            "go": [1, 2, 4, 5],
+            "have": [1, 2, 5],
+            "just": [2, 4, 5],
+            "knowledge": [1, 3],
+            "like": [1, 2, 3],
+            "more": [1, 3, 4],
+            "not": [1, 3, 4, 5],
+            "people": [1, 2, 3, 4],
+            "quite": [1, 2, 3, 4, 5],
+            "rather": [1, 2, 3, 5],
+            "so": [2, 3, 4],
+            "that": [2, 3, 4, 5],
+            "us": [1, 3, 6],
+            "very": [1, 2, 3, 6],
+            "it": [1, 3, 4, 6],
+            "you": [1, 3, 4, 5, 6],
+            "as": [1, 3, 5, 6],
+            "will": [2, 4, 5, 6],
+        }
+        return binary_dict[string]

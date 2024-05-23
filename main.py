@@ -2,7 +2,10 @@ import tkinter as tk
 from antlr4 import *
 from gen.uncontracted_brailleLexer import uncontracted_brailleLexer
 from gen.uncontracted_brailleParser import uncontracted_brailleParser
-from CellGenerator import CellGenerator
+from gen.contracted_braille_lexer import contracted_braille_lexer
+from gen.contracted_braille_parser import contracted_braille_parser
+from UncontractedCellGenerator import UncontractedCellGenerator
+from ContractedCellGenerator import ContractedCellGenerator
 from tts import pronounce_letters
 import socket
 import threading
@@ -18,7 +21,7 @@ VSCODE = 0
 TEXT = 1
 
 
-def get_target_string(json_data):
+def get_target_string(json_data: dict) -> str:
     data_type = json_data['type']
 
     if data_type == 'vscode':
@@ -48,8 +51,7 @@ class SocketHandler:
                     break
                 json_data = json.loads(data.decode('utf-8'))
                 if json_data:
-                    self.shared_string = get_target_string(json_data)
-                    self.main_window.render_braille_cells(self.shared_string)
+                    self.main_window.render_braille_cells(json_data)
         except Exception as e:
             print(f"Error: {e}")
             print("Attempting to reconnect...")
@@ -57,13 +59,28 @@ class SocketHandler:
             conn.close()
 
 
-def get_cells(string):
+def get_cells(json_object: dict) -> list:
+    string = get_target_string(json_object)
+    is_contracted = json_object['is_contracted']
+
+    string = "you! are a good person"
+
     input_stream = InputStream(string)
-    lexer = uncontracted_brailleLexer(input_stream)
-    token_stream = CommonTokenStream(lexer)
-    parser = uncontracted_brailleParser(token_stream)
+
+    is_contracted = True
+
+    if is_contracted:
+        cell_generator = ContractedCellGenerator()
+        lexer = contracted_braille_lexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        parser = contracted_braille_parser(token_stream)
+    else:
+        cell_generator = UncontractedCellGenerator()
+        lexer = uncontracted_brailleLexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        parser = uncontracted_brailleParser(token_stream)
+
     ast = parser.text()
-    cell_generator = CellGenerator()
 
     cells = cell_generator.generate_cells(ast)
     return cells
@@ -146,7 +163,13 @@ class MainWindow(tk.Tk):
         self.socket_handler = SocketHandler(self.shared_string, self)
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
-        self.render_braille_cells(self.shared_string)
+        empty_object = {
+            "type": "text",
+            "content": "",
+            "is_contracted": False
+        }
+
+        self.render_braille_cells(empty_object)
 
     def create_braille_keyboard(self):
         self.braille_buttons = []
@@ -168,7 +191,9 @@ class MainWindow(tk.Tk):
                 widgets.append(cell)
         return widgets
 
-    def render_braille_cells(self, string):
+    def render_braille_cells(self, json_object: dict) -> None:
+        string = get_target_string(json_object)
+
         if self.updates_blocked:
             return
         self.label.config(text=string)
@@ -176,7 +201,7 @@ class MainWindow(tk.Tk):
         self.current_page = 0
 
         # Convert the string to a list of Braille cells
-        cells = get_cells(string)
+        cells = get_cells(json_object)
         cell_widgets = convert_to_widgets(cells)
 
         if not cell_widgets:

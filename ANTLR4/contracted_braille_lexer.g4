@@ -1,11 +1,22 @@
 lexer grammar contracted_braille_lexer;
 
+@members {
+def not_alnum_before(self):
+    prev_char = chr(self._input.LA(-1)) if self._input.LA(-1) >= 0 else ''
+    return not prev_char.isalnum()
+
+def not_alnum_after(self):
+    next_char = chr(self._input.LA(1)) if self._input.LA(1) >= 0 else ''
+    return not next_char.isalnum()
+}
+
 ALPHABETIC_WORDSIGN
-    :
-        'but' | 'can' | 'do' | 'every' | 'from' | 'go' |
+    :   {self.not_alnum_before()}?
+        ('but' | 'can' | 'do' | 'every' | 'from' | 'go' |
          'have' | 'just' | 'knowledge' | 'like' | 'more' |
          'not' | 'people' | 'quite' | 'rather' | 'so' |
-         'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as'
+         'that' | 'us' | 'very' | 'will' | 'it' | 'you' | 'as')
+        {self.not_alnum_after()}?
     ;
 
 
