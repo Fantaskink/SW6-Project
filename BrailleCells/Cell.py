@@ -79,6 +79,14 @@ class NumeralIndicator:
         return f"Numeral Indicator: {self.cells}"
 
 
+class Grade1SymbolIndicator:
+    def __init__(self):
+        self.cells = [Cell([5, 6], "Grade 1")]
+
+    def __str__(self):
+        return f"Grade 1 Indicator: {self.cells}"
+
+
 class Grade1Terminator:
     def __init__(self):
         self.cells = [Cell([5, 6], "Grade 1"), Cell([3], "terminator")]
@@ -258,5 +266,24 @@ class StrongWordsign:
             "which": [1, 5, 6],
             "out": [1, 2, 5, 6],
             "still": [1, 4],
+        }
+        return binary_dict[string]
+
+
+class LowerWordsign:
+    def __init__(self, string):
+        self.cells = [Cell(self.get_dots(string.lower()), string.lower())]
+
+    def __str__(self):
+        return f"Lower Wordsign: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            "be": [2, 3],
+            "enough": [2, 6],
+            "were": [2, 3, 5, 6],
+            "his": [2, 3, 6],
+            "in": [3, 5],
+            "was": [3, 5, 6],
         }
         return binary_dict[string]

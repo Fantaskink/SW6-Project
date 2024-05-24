@@ -9,7 +9,35 @@ options {
         ;
 
     word
-        :    (sequence | single)+ | wordsign
+        :    standing_alone | (sequence | single)+
+        ;
+
+    standing_alone
+        :   standing_alone_single | standing_alone_sequence
+        ;
+
+    standing_alone_single
+        :   standing_alone_letter | standing_alone_wordsign | lower_wordsign
+        ;
+
+    standing_alone_wordsign
+        :   symbol_sequence? (wordsign | lower_wordsign) symbol_sequence?
+        ;
+
+    lower_wordsign
+        :   LOWER_WORDSIGN_L | LOWER_WORDSIGN_F | LOWER_WORDSIGN_C
+        ;
+
+    standing_alone_connector
+        :   HYPHEN | DASH
+        ;
+
+    standing_alone_letter
+        :   capital_letter | lowercase
+        ;
+
+    standing_alone_sequence
+        :   standing_alone_connector? (wordsign | lowercase_sequence | numeral_sequence) ((standing_alone_connector sequence)* | standing_alone_connector)
         ;
 
     wordsign
@@ -73,7 +101,7 @@ options {
         ;
 
     symbol_sequence
-        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
+        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+ (lowercase_sequence | capital_sequence | single)?
         ;
 
     punctuation

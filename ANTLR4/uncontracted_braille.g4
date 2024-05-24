@@ -45,7 +45,7 @@ grammar uncontracted_braille;
         ;
 
     symbols_sequence
-        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
+        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement | special)+
         ;
 
     punctuation
@@ -68,6 +68,10 @@ grammar uncontracted_braille;
 
     currency_and_measurement
         :   '€' | '$' | '£'
+        ;
+
+    special
+        :   '@'
         ;
 
     lowercase

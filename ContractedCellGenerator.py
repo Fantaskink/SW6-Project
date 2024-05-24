@@ -82,6 +82,22 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
         self.signs.append(StrongContraction(ctx.getChild(0).getText()))
         return
 
+    def visitLower_wordsign(self, ctx:contracted_braille_parser.Lower_wordsignContext):
+        if ctx.LOWER_WORDSIGN_F():
+            self.signs.append(CapitalFirstLetter())
+        if ctx.LOWER_WORDSIGN_C():
+            self.signs.append(CapitalWordIndicator())
+        self.signs.append(LowerWordsign(ctx.getChild(0).getText()))
+        return
+
+    def visitStanding_alone_letter(self, ctx:contracted_braille_parser.Standing_alone_letterContext):
+        self.signs.append(Grade1SymbolIndicator())
+        return self.visitChildren(ctx)
+
+    def visitStanding_alone_connector(self, ctx:contracted_braille_parser.Standing_alone_connectorContext):
+        self.signs.append(Punctuation(ctx.getChild(0).getText()))
+        return
+
     def visitOp_and_comp(self, ctx: contracted_braille_parser.Op_and_compContext):
         self.signs.append(OpAndComp(ctx.getChild(0).getText()))
         return
