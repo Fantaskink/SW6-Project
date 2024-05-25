@@ -1,20 +1,16 @@
 from gtts import gTTS
-from pydub import AudioSegment
-import simpleaudio as sa
 import os
 import re
 import pygame
 
 
-def pronounce_letters(text):
-    # Insert spaces between each character
-    # spaced_text = ' '.join(text)
+def read_text(text, phonetic=False):
+    if phonetic:
+        text = replace_chars_with_string(text)
+        text = replace_with_phonetic_spelling(text)
 
-    new_text = replace_chars_with_string(text)
-    new_text = replace_with_phonetic_spelling(new_text)
-    #print(new_text)
-    # Create a gTTS object for the modified text
-    tts = gTTS(new_text)
+    # Create a gTTS object for the text
+    tts = gTTS(text, lang='en')
     # Save the audio as a temporary file
     tts.save("temp/tts.mp3")
     try:
