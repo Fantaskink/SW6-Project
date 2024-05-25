@@ -4,7 +4,7 @@ import re
 import pygame
 
 
-def read_text(text, phonetic=False):
+def read_text(text, phonetic: bool = False):
     if phonetic:
         text = replace_chars_with_string(text)
         text = replace_with_phonetic_spelling(text)
