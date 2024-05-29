@@ -50,11 +50,13 @@ async def ocr_image(data_url):
     image = Image.open(image_bytes)
     # Perform OCR on the image
     text = pytesseract.image_to_string(image)
-    print(text)
-    # Send the text to the server
+
+    # Create a json object to send to the server
+    json_data = json.dumps({'type': 'text', 'content': text})
     while True:
         try:
-            sock.sendall(text.encode('utf-8'))
+            # Send the data to the server
+            sock.sendall(json_data.encode('utf-8'))
             # If the data is sent successfully, break the loop
             break
         except Exception as e:

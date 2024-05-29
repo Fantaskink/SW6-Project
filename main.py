@@ -6,7 +6,7 @@ from gen.contracted_braille_lexer import contracted_braille_lexer
 from gen.contracted_braille_parser import contracted_braille_parser
 from UncontractedCellGenerator import UncontractedCellGenerator
 from ContractedCellGenerator import ContractedCellGenerator
-from tts import pronounce_letters
+from tts import read_text
 import socket
 import threading
 import json
@@ -17,8 +17,8 @@ MAX_COLUMNS = 20
 WINDOW_WIDTH = 1100
 WINDOW_HEIGHT = 250
 
-VSCODE = 0
-TEXT = 1
+TEXT = 0
+VSCODE = 1
 
 
 def get_target_string(json_data: dict) -> str:
@@ -34,13 +34,12 @@ def get_target_string(json_data: dict) -> str:
 
 
 class SocketHandler:
-    def __init__(self, shared_string, main_window):
+    def __init__(self, main_window):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('localhost', PORT))
         self.sock.listen(1)
 
-        self.shared_string = shared_string
         self.main_window = main_window
 
     def listen_for_data(self):
@@ -62,15 +61,11 @@ class SocketHandler:
             self.sock.close()
 
 
-def get_cells(json_object: dict) -> list:
-    string = get_target_string(json_object)
-    is_contracted = json_object['is_contracted']
-
-    string = "Test!"
+def get_cells(data: dict) -> list:
+    string = get_target_string(data)
+    is_contracted = data['is_contracted']
 
     input_stream = InputStream(string)
-
-    is_contracted = True
 
     if is_contracted:
         cell_generator = ContractedCellGenerator()
@@ -83,17 +78,13 @@ def get_cells(json_object: dict) -> list:
         token_stream = CommonTokenStream(lexer)
         parser = uncontracted_brailleParser(token_stream)
 
-    token_stream.fill()
-    for token in token_stream.tokens:
-        print(token)
-
     ast = parser.text()
 
     cells = cell_generator.generate_cells(ast)
     return cells
 
 
-def convert_to_widgets(cells):
+def convert_to_widgets(cells: list) -> list:
     widgets = []
     for cell in cells:
         widgets.append(BrailleCellWidget(None, cell.dots, cell.character))
@@ -108,7 +99,7 @@ class BrailleCellWidget(tk.Frame):
         self.character = character
         self.create_labels()
 
-    def create_labels(self):
+    def create_labels(self) -> None:
         # Create labels for each dot
         self.dot_labels = []
         for i in range(6):
@@ -120,7 +111,7 @@ class BrailleCellWidget(tk.Frame):
         character_label = tk.Label(self, text=self.character, width=5)
         character_label.grid(row=3, column=0, columnspan=2)  # Span two columns
 
-    def update_display(self):
+    def update_display(self) -> None:
         # Update the display based on the state of the dots
         dot_symbols = ["○", "●"]  # Not raised and raised dot symbols
         for i in range(6):
@@ -129,14 +120,14 @@ class BrailleCellWidget(tk.Frame):
             else:
                 self.dot_labels[i]["text"] = dot_symbols[0]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Braille Cell: {self.character} {self.dots}"
 
 
 class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Braille Cells")
+        self.title("Simulated Braille Display")
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.cell_pages = []
         self.cells_on_page = []
@@ -144,9 +135,7 @@ class MainWindow(tk.Tk):
 
         self.updates_blocked = False
 
-        self.braille_keyboard_frame = tk.Frame(self)
-        self.braille_keyboard_frame.grid(row=2, column=0, columnspan=MAX_COLUMNS)
-        self.create_braille_keyboard()
+        self.context = TEXT
 
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(row=1, column=0, columnspan=MAX_COLUMNS)
@@ -165,9 +154,7 @@ class MainWindow(tk.Tk):
         self.label = tk.Label(self, text="")
         self.label.grid(row=MAX_ROWS + 2, column=0, columnspan=20, padx=10, pady=10)
 
-        self.shared_string = ""
-
-        self.socket_handler = SocketHandler(self.shared_string, self)
+        self.socket_handler = SocketHandler(self)
         threading.Thread(target=self.socket_handler.listen_for_data).start()
 
         empty_object = {
@@ -178,18 +165,7 @@ class MainWindow(tk.Tk):
 
         self.render_braille_cells(empty_object)
 
-    def create_braille_keyboard(self):
-        self.braille_buttons = []
-        for i in range(6):
-            button = tk.Button(self.braille_keyboard_frame, text=f"{i + 1}",
-                               command=lambda i=i: self.braille_button_pressed(i))
-            button.grid(row=i % 3, column=i // 3)
-            self.braille_buttons.append(button)
-
-    def braille_button_pressed(self, i):
-        print(f"Braille button {i + 1} pressed")
-
-    def get_empty_widgets(self):
+    def get_empty_widgets(self) -> list:
         widgets = []
         for i in range(MAX_ROWS):
             for j in range(MAX_COLUMNS):
@@ -198,8 +174,14 @@ class MainWindow(tk.Tk):
                 widgets.append(cell)
         return widgets
 
-    def render_braille_cells(self, json_object: dict) -> None:
-        string = get_target_string(json_object)
+    def render_braille_cells(self, data: dict) -> None:
+        string = get_target_string(data)
+        type = data['type']
+
+        if type == 'vscode':
+            self.context = VSCODE
+        elif type == 'text':
+            self.context = TEXT
 
         if self.updates_blocked:
             return
@@ -208,7 +190,7 @@ class MainWindow(tk.Tk):
         self.current_page = 0
 
         # Convert the string to a list of Braille cells
-        cells = get_cells(json_object)
+        cells = get_cells(data)
         cell_widgets = convert_to_widgets(cells)
 
         if not cell_widgets:
@@ -219,31 +201,37 @@ class MainWindow(tk.Tk):
         # Create a list of pages, each page containing max_cells number of cells
         self.cell_pages = [cell_widgets[i:i + max_cells] for i in range(0, len(cell_widgets), max_cells)]
 
-        # Create next and previous buttons
+        # Set the current page to the first page
         self.cells_on_page = self.cell_pages[self.current_page]
 
         # Place the Braille cells on the window
         self.update_display()
 
-    def next_page(self):
+    def next_page(self) -> None:
         self.current_page = min(self.current_page + 1, len(self.cell_pages) - 1)
         self.update_display()
 
-    def previous_page(self):
+    def previous_page(self) -> None:
         self.current_page = max(0, self.current_page - 1)
         self.update_display()
 
-    def text_to_speech(self):
+    def text_to_speech(self) -> None:
         text = self.label.cget("text")
+
+        phonetic = False
+
+        if self.context == VSCODE:
+            phonetic = True
+
         if len(text) == 0:
             return
-        threading.Thread(target=pronounce_letters, args=(text,)).start()
+        threading.Thread(target=read_text, args=(text, phonetic)).start()
 
-    def block_updates(self):
+    def block_updates(self) -> None:
         self.updates_blocked = not self.updates_blocked
         self.block_updates_button.config(text="Locked" if self.updates_blocked else "Unlocked")
 
-    def update_display(self):
+    def update_display(self) -> None:
         # Remove all cells from the grid
         for widget in self.grid_slaves():
             if isinstance(widget, BrailleCellWidget):
@@ -252,10 +240,10 @@ class MainWindow(tk.Tk):
         # Update the cells on the current page
         self.cells_on_page = self.cell_pages[self.current_page]
 
-        # Update the display of each cell
-        for index, cell in enumerate(self.cells_on_page):
-            row_index = index // MAX_COLUMNS
-            column_index = index % MAX_COLUMNS
+        # Place the cells on the grid
+        for cell_index, cell in enumerate(self.cells_on_page):
+            row_index = cell_index // MAX_COLUMNS
+            column_index = cell_index % MAX_COLUMNS
             cell.grid(row=row_index, column=column_index)
             cell.update_display()  # Update the display of the Braille cell widget
 

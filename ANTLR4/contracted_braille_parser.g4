@@ -9,63 +9,62 @@ options {
         ;
 
     word
-        :    standing_alone | (sequence | single)+
+        :    standing_alone | sequence
         ;
 
     standing_alone
-        :   standing_alone_single | standing_alone_sequence
+        :   standing_alone_connector* standing_alone_part (standing_alone_connector standing_alone_part?)*
         ;
 
-    standing_alone_single
-        :   standing_alone_letter | standing_alone_wordsign | lower_wordsign
+    standing_alone_part
+        :   single_letter | lowercase_sequence | standing_alone_letter  | capitals_sequence |
+            alphabetic_wordsign | lower_wordsign | strong_wordsign |
+            numeral_sequence
         ;
 
-    standing_alone_wordsign
-        :   symbol_sequence? (wordsign | lower_wordsign) symbol_sequence?
+    single_letter
+        :   Uppercase | Lowercase
         ;
+
+    single_capital_letter
+        :   Uppercase
+        ;
+
 
     lower_wordsign
         :   LOWER_WORDSIGN_L | LOWER_WORDSIGN_F | LOWER_WORDSIGN_C
         ;
 
     standing_alone_connector
-        :   HYPHEN | DASH
+        :   HYPHEN | DASH | LONG_DASH
         ;
 
     standing_alone_letter
         :   capital_letter | lowercase
         ;
 
-    standing_alone_sequence
-        :   standing_alone_connector? (wordsign | lowercase_sequence | numeral_sequence) ((standing_alone_connector sequence)* | standing_alone_connector)
-        ;
-
-    wordsign
-        :   alphabetic_wordsign | strong_wordsign
-        ;
-
     alphabetic_wordsign
-        :   ALPHABETIC_WORDSIGN_L | ALPHABETIC_WORDSIGN_F | ALPHABETIC_WORDSIGN_C
+        :   (ALPHABETIC_WORDSIGN_L | ALPHABETIC_WORDSIGN_F | ALPHABETIC_WORDSIGN_C)
         ;
 
     strong_wordsign
         :   STRONG_WORDSIGN_L | STRONG_WORDSIGN_F | STRONG_WORDSIGN_C
         ;
 
-    sequence
-        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)
+    shortform
+        :   SHORTFORM_L | SHORTFORM_F | SHORTFORM_C
         ;
 
-    single
-        :   capital_letter | strong_contraction_f
+    sequence
+        :   (capitals_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)
         ;
 
     capital_letter
-        :   uppercase
+        :   uppercase (lowercase_sequence | numeral_sequence |symbol_sequence)?
         ;
 
-    capital_sequence
-        :   (uppercase uppercase+) | (uppercase* strong_contraction_c+ uppercase*) capitals_terminator?
+    capitals_sequence
+        :   ((uppercase uppercase+) | (uppercase* (strong_contraction_c | strong_groupsign_c)+ uppercase*)) capitals_terminator?
         ;
 
     capitals_terminator
@@ -85,7 +84,7 @@ options {
         ;
 
     lowercase_sequence
-        :   strong_contraction_l+ | lowercase+
+        :   (strong_contraction_l | lowercase | strong_groupsign_l)+
         ;
 
     strong_contraction_l
@@ -100,14 +99,27 @@ options {
         :   STRONG_CONTRACTION_C
         ;
 
+    strong_groupsign_l
+        :   STRONG_GROUPSIGN_L
+        ;
+
+    strong_groupsign_f
+        :   STRONG_GROUPSIGN_F
+        ;
+
+    strong_groupsign_c
+        :   STRONG_GROUPSIGN_C
+        ;
+
+
     symbol_sequence
-        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+ (lowercase_sequence | capital_sequence | single)?
+        :   (punctuation | grouping_punctuation | op_and_comp | currency_and_measurement)+
         ;
 
     punctuation
         :   DOT | COMMA | APOSTROPHE | COLON | UNDERSCORE | DASH | EXCLAMATION | HYPHEN |
             QUESTION | SEMICOLON | SLASH | BACKSLASH | QUOTATION_OPEN | QUOTATION_CLOSE |
-            SINGLE_QUOTE_OPEN | SINGLE_QUOTE_CLOSE
+            SINGLE_QUOTE_OPEN | SINGLE_QUOTE_CLOSE | DOUBLE_QUOTE | LONG_DASH
         ;
 
     space

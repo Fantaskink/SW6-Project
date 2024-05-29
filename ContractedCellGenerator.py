@@ -90,8 +90,31 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
         self.signs.append(LowerWordsign(ctx.getChild(0).getText()))
         return
 
+    def visitShortform(self, ctx:contracted_braille_parser.ShortformContext):
+        if ctx.SHORTFORM_F():
+            self.signs.append(CapitalFirstLetter())
+        if ctx.SHORTFORM_C():
+            self.signs.append(CapitalWordIndicator())
+        self.signs.append(Shortform(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_groupsign_c(self, ctx:contracted_braille_parser.Strong_groupsign_cContext):
+        self.signs.append(StrongGroupsign(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_groupsign_f(self, ctx:contracted_braille_parser.Strong_groupsign_fContext):
+        self.signs.append(CapitalFirstLetter())
+        self.signs.append(StrongGroupsign(ctx.getChild(0).getText()))
+        return
+
+    def visitStrong_groupsign_l(self, ctx:contracted_braille_parser.Strong_groupsign_lContext):
+        self.signs.append(StrongGroupsign(ctx.getChild(0).getText()))
+        return
+
     def visitStanding_alone_letter(self, ctx:contracted_braille_parser.Standing_alone_letterContext):
-        self.signs.append(Grade1SymbolIndicator())
+        # the dots for a, i and o do not have alphabetic wordsign meanings
+        if ctx.getText().lower() not in ['a', 'i', 'o']:
+            self.signs.append(Grade1SymbolIndicator())
         return self.visitChildren(ctx)
 
     def visitStanding_alone_connector(self, ctx:contracted_braille_parser.Standing_alone_connectorContext):
@@ -101,6 +124,18 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
     def visitOp_and_comp(self, ctx: contracted_braille_parser.Op_and_compContext):
         self.signs.append(OpAndComp(ctx.getChild(0).getText()))
         return
+
+    def visitLowercase_sequence(self, ctx:contracted_braille_parser.Lowercase_sequenceContext):
+        string = ""
+        for letter in ctx.children:
+            string += letter.getText()
+
+        shortform_letters = ['ab', 'ac', 'af', 'afw', 'alm', 'alt', 'alw']
+
+        if string in shortform_letters:
+            self.signs.append(Grade1SymbolIndicator())
+
+        return self.visitChildren(ctx)
 
     def visitUppercase(self, ctx: contracted_braille_parser.UppercaseContext):
         self.signs.append(Alphabetic(ctx.getChild(0).getText()))

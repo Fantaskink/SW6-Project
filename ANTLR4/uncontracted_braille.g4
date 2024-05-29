@@ -9,7 +9,7 @@ grammar uncontracted_braille;
         ;
 
     sequence
-        :   (capital_sequence | numeral_sequence | lowercase_sequence | symbols_sequence)
+        :   (capitals_sequence | numeral_sequence | lowercase_sequence | symbols_sequence)
         ;
 
     single
@@ -20,7 +20,7 @@ grammar uncontracted_braille;
         :   uppercase
         ;
 
-    capital_sequence
+    capitals_sequence
         :   uppercase uppercase+ capitals_terminator?
         ;
 

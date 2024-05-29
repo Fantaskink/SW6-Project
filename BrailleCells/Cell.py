@@ -115,10 +115,13 @@ class Punctuation:
             ".": [2, 4, 5],
             "'": [3],
             "‘": [3],
+            "\"": [[6], [2, 3, 5, 6]],
             ":": [2, 5],
             "!": [2, 3, 5],
             "-": [3, 6],
             "_": [[4, 6], [3, 6]],
+            "–": [[6], [3, 6]],
+            "—": [[5], [6], [3, 6]],
             "?": [2, 3, 6],
             ";": [2, 3],
             "/": [[4, 5, 6], [3, 4]],
@@ -129,11 +132,9 @@ class Punctuation:
 
 class GroupingPunctuation:
     def __init__(self, character):
-        dots = self.get_dots(character)
-        if isinstance(dots[0], list):
-            self.cells = [Cell(dots[0], character), Cell(dots[1], character)]
-        else:
-            self.cells = [Cell(self.get_dots(character), character)]
+        self.cells = []
+        for dots in self.get_dots(character):
+            self.cells.append(Cell(dots, character))
 
     def __str__(self):
         return f"Grouping Punctuation: {self.cells}"
@@ -285,5 +286,53 @@ class LowerWordsign:
             "his": [2, 3, 6],
             "in": [3, 5],
             "was": [3, 5, 6],
+        }
+        return binary_dict[string]
+
+
+class Shortform:
+    def __init__(self, string):
+        self.cells = []
+        for dots in self.get_dots(string.lower()):
+            self.cells.append(Cell(dots, string.lower()))
+
+    def __str__(self):
+        return f"Shortform: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            'about': [[1], [1, 2]],
+            'according': [[1], [1, 4]],
+            'after': [[1], [1, 2, 4]],
+            'afterward': [[1], [1, 2, 4], [2, 4, 5, 6]],
+            'against': [[1], [1, 2, 4, 5], [3, 4]],
+            'almost': [[1], [1, 2, 3], [1, 3, 4]],
+            'altogether': [[1], [1, 2, 3], [2, 3, 4, 5]],
+            'always': [[1], [1, 2, 3], [2, 4, 5, 6]],
+        }
+        return binary_dict[string]
+
+
+class StrongGroupsign:
+    def __init__(self, string):
+        self.cells = [Cell(self.get_dots(string.lower()), string.lower())]
+
+    def __str__(self):
+        return f"Strong Groupsign: {self.cells}"
+
+    def get_dots(self, string):
+        binary_dict = {
+            "ch": [1, 6],
+            "gh": [1, 2, 6],
+            "sh": [1, 4, 6],
+            "th": [1, 4, 5, 6],
+            "wh": [1, 5, 6],
+            "ed": [1, 2, 4, 6],
+            "er": [1, 2, 4, 5, 6],
+            "ou": [1, 2, 5, 6],
+            "ow": [2, 4, 6],
+            "st": [3, 4],
+            "ing": [3, 4, 6],
+            "ar": [3, 4, 5],
         }
         return binary_dict[string]

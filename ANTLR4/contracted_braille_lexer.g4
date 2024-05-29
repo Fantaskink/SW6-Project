@@ -100,12 +100,46 @@ STRONG_CONTRACTION_F
         'And' | 'For' | 'Of' | 'The' | 'With'
     ;
 
+SHORTFORM_L
+    :   {self.not_alnum(-1)}?
+        ('about' | 'above' | 'according' | 'across' | 'after' | 'afternoon' | 'afterward' | 'again' | 'against' | 'also' | 'almost' | 'already' | 'altogether' | 'although' | 'always' | 'blind' | 'braille' | 'could' | 'declare' | 'declaring' | 'deceive' | 'deceiving' | 'either' | 'friend' | 'first' | 'good' | 'great' | 'him' | 'himself' | 'herself' | 'immediate' | 'little' | 'letter' | 'myself' | 'much' | 'must' | 'necessary' | 'neither' | 'paid' | 'perceive' | 'perceiving' | 'perhaps' | 'quick' | 'receive' | 'receiving' | 'rejoice' | 'rejoicing' | 'said' | 'such' | 'today' | 'together' | 'tomorrow' | 'tonight' | 'itself' | 'its' | 'your' | 'yourself' | 'yourselves' | 'themselves' | 'children' | 'should' | 'thyself' | 'ourselves' | 'would' | 'because' | 'before' | 'behind' | 'below' | 'beneath' | 'beside' | 'between' | 'beyond' | 'conceive' | 'conceiving' | 'oneself')
+        {self.not_alnum(1)}?
+    ;
+
+SHORTFORM_C
+    :   {self.not_alnum(-1)}?
+        ('ABOUT' | 'ABOVE' | 'ACCORDING' | 'ACROSS' | 'AFTER' | 'AFTERNOON' | 'AFTERWARD' | 'AGAIN' | 'AGAINST' | 'ALSO' | 'ALMOST' | 'ALREADY' | 'ALTOGETHER' | 'ALTHOUGH' | 'ALWAYS' | 'BLIND' | 'BRAILLE' | 'COULD' | 'DECLARE' | 'DECLARING' | 'DECEIVE' | 'DECEIVING' | 'EITHER' | 'FRIEND' | 'FIRST' | 'GOOD' | 'GREAT' | 'HIM' | 'HIMSELF' | 'HERSELF' | 'IMMEDIATE' | 'LITTLE' | 'LETTER' | 'MYSELF' | 'MUCH' | 'MUST' | 'NECESSARY' | 'NEITHER' | 'PAID' | 'PERCEIVE' | 'PERCEIVING' | 'PERHAPS' | 'QUICK' | 'RECEIVE' | 'RECEIVING' | 'REJOICE' | 'REJOICING' | 'SAID' | 'SUCH' | 'TODAY' | 'TOGETHER' | 'TOMORROW' | 'TONIGHT' | 'ITSELF' | 'ITS' | 'YOUR' | 'YOURSELF' | 'YOURSELVES' | 'THEMSELVES' | 'CHILDREN' | 'SHOULD' | 'THYSELF' | 'OURSELVES' | 'WOULD' | 'BECAUSE' | 'BEFORE' | 'BEHIND' | 'BELOW' | 'BENEATH' | 'BESIDE' | 'BETWEEN' | 'BEYOND' | 'CONCEIVE' | 'CONCEIVING' | 'ONESELF')
+        {self.not_alnum(1)}?
+    ;
+
+SHORTFORM_F
+    :   {self.not_alnum(-1)}?
+        ('About' | 'Above' | 'According' | 'Across' | 'After' | 'Afternoon' | 'Afterward' | 'Again' | 'Against' | 'Also' | 'Almost' | 'Already' | 'Altogether' | 'Although' | 'Always' | 'Blind' | 'Braille' | 'Could' | 'Declare' | 'Declaring' | 'Deceive' | 'Deceiving' | 'Either' | 'Friend' | 'First' | 'Good' | 'Great' | 'Him' | 'Himself' | 'Herself' | 'Immediate' | 'Little' | 'Letter' | 'Myself' | 'Much' | 'Must' | 'Necessary' | 'Neither' | 'Paid' | 'Perceive' | 'Perceiving' | 'Perhaps' | 'Quick' | 'Receive' | 'Receiving' | 'Rejoice' | 'Rejoicing' | 'Said' | 'Such' | 'Today' | 'Together' | 'Tomorrow' | 'Tonight' | 'Itself' | 'Its' | 'Your' | 'Yourself' | 'Yourselves' | 'Themselves' | 'Children' | 'Should' | 'Thyself' | 'Ourselves' | 'Would' | 'Because' | 'Before' | 'Behind' | 'Below' | 'Beneath' | 'Beside' | 'Between' | 'Beyond' | 'Conceive' | 'Conceiving' | 'Oneself')
+        {self.not_alnum(1)}?
+    ;
+
+STRONG_GROUPSIGN_L
+    :
+        'ch' | 'gh' | 'sh' | 'th' | 'wh' | 'ed' | 'er' | 'ou' | 'ow' | 'st' | 'ing' | 'ar'
+    ;
+
+STRONG_GROUPSIGN_C
+    :
+        'CH' | 'GH' | 'SH' | 'TH' | 'WH' | 'ED' | 'ER' | 'OU' | 'OW' | 'ST' | 'ING' | 'AR'
+    ;
+
+STRONG_GROUPSIGN_F
+    :
+        'Ch' | 'Gh' | 'Sh' | 'Th' | 'Wh' | 'Ed' | 'Er' | 'Ou' | 'Ow' | 'St' | 'Ing' | 'Ar'
+    ;
+
 DOT : '.';
 COMMA : ',';
 APOSTROPHE : '\'';
 COLON : ':';
 UNDERSCORE : '_';
-DASH : '—';
+LONG_DASH : '—';
+DASH : '–';
 EXCLAMATION : '!';
 HYPHEN : '-';
 QUESTION : '?';
@@ -116,6 +150,7 @@ QUOTATION_OPEN : '“';
 QUOTATION_CLOSE : '”';
 SINGLE_QUOTE_OPEN : '‘';
 SINGLE_QUOTE_CLOSE : '’';
+DOUBLE_QUOTE : '"';
 
 LPAREN : '(';
 RPAREN : ')';
