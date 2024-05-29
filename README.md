@@ -13,7 +13,8 @@
 
 # Running the main program
 1. Install the required packages with pip.
-2. Run main.py to launch the GUI.
+2. Run "main.py" to launch the GUI.
+3. Run "firefox_server.py" to launch the firefox image OCR server
    
 
 # Running the VSCode plugin
