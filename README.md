@@ -5,7 +5,7 @@
 # Generating the required ANTLR files
 
 1. Install the ANTLR v4 plugin in Pycharm or another JetBrains IDE.
-2. Right click "unconctracted_braille.g4" in the ANTLR4 folder and select "Configure ANTLR".
+2. Right click "uncontracted_braille.g4" in the ANTLR4 folder and select "Configure ANTLR".
 3. In Language, write "Python3" and click "OK".
 4. Right click the grammar file again and choose "Generate ANTLR Recognizer".
 5. Repeat the same steps for the other grammar files.
