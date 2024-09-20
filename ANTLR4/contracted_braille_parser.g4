@@ -51,9 +51,9 @@ options {
         :   STRONG_WORDSIGN_L | STRONG_WORDSIGN_F | STRONG_WORDSIGN_C
         ;
 
-    shortform
-        :   SHORTFORM_L | SHORTFORM_F | SHORTFORM_C
-        ;
+    //shortform
+    //    :   SHORTFORM_L | SHORTFORM_F | SHORTFORM_C
+    //    ;
 
     sequence
         :   (capitals_sequence | numeral_sequence | lowercase_sequence | symbol_sequence)

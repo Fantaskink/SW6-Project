@@ -138,7 +138,7 @@ class MainWindow(tk.Tk):
         self.context = TEXT
 
         self.button_frame = tk.Frame(self)
-        self.button_frame.grid(row=1, column=0, columnspan=MAX_COLUMNS)
+        self.button_frame.grid(row=MAX_ROWS + 1, column=0, columnspan=MAX_COLUMNS)
 
         self.next_button = tk.Button(self.button_frame, text=">", command=self.next_page)
         self.previous_button = tk.Button(self.button_frame, text="<", command=self.previous_page)

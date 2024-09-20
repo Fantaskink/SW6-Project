@@ -52,7 +52,7 @@ async def ocr_image(data_url):
     text = pytesseract.image_to_string(image)
 
     # Create a json object to send to the server
-    json_data = json.dumps({'type': 'text', 'content': text})
+    json_data = json.dumps({'type': 'text', 'is_contracted': 'true', 'content': text})
     while True:
         try:
             # Send the data to the server

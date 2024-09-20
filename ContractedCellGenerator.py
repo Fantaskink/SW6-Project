@@ -22,7 +22,7 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
         self.signs.append(Punctuation(ctx.getChild(0).getText()))
         return
 
-    def visitCapital_sequence(self, ctx: contracted_braille_parser.Capital_sequenceContext):
+    def visitCapitals_sequence(self, ctx: contracted_braille_parser.Capitals_sequenceContext):
         self.signs.append(CapitalWordIndicator())
         return self.visitChildren(ctx)
 
@@ -90,13 +90,13 @@ class ContractedCellGenerator(contracted_braille_parserVisitor):
         self.signs.append(LowerWordsign(ctx.getChild(0).getText()))
         return
 
-    def visitShortform(self, ctx:contracted_braille_parser.ShortformContext):
-        if ctx.SHORTFORM_F():
-            self.signs.append(CapitalFirstLetter())
-        if ctx.SHORTFORM_C():
-            self.signs.append(CapitalWordIndicator())
-        self.signs.append(Shortform(ctx.getChild(0).getText()))
-        return
+    #def visitShortform(self, ctx:contracted_braille_parser.ShortformContext):
+     #   if ctx.SHORTFORM_F():
+      #      self.signs.append(CapitalFirstLetter())
+       # if ctx.SHORTFORM_C():
+        #    self.signs.append(CapitalWordIndicator())
+        #self.signs.append(Shortform(ctx.getChild(0).getText()))
+        #return
 
     def visitStrong_groupsign_c(self, ctx:contracted_braille_parser.Strong_groupsign_cContext):
         self.signs.append(StrongGroupsign(ctx.getChild(0).getText()))

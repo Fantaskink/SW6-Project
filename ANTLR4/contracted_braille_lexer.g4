@@ -112,11 +112,11 @@ SHORTFORM_C
         {self.not_alnum(1)}?
     ;
 
-SHORTFORM_F
-    :   {self.not_alnum(-1)}?
-        ('About' | 'Above' | 'According' | 'Across' | 'After' | 'Afternoon' | 'Afterward' | 'Again' | 'Against' | 'Also' | 'Almost' | 'Already' | 'Altogether' | 'Although' | 'Always' | 'Blind' | 'Braille' | 'Could' | 'Declare' | 'Declaring' | 'Deceive' | 'Deceiving' | 'Either' | 'Friend' | 'First' | 'Good' | 'Great' | 'Him' | 'Himself' | 'Herself' | 'Immediate' | 'Little' | 'Letter' | 'Myself' | 'Much' | 'Must' | 'Necessary' | 'Neither' | 'Paid' | 'Perceive' | 'Perceiving' | 'Perhaps' | 'Quick' | 'Receive' | 'Receiving' | 'Rejoice' | 'Rejoicing' | 'Said' | 'Such' | 'Today' | 'Together' | 'Tomorrow' | 'Tonight' | 'Itself' | 'Its' | 'Your' | 'Yourself' | 'Yourselves' | 'Themselves' | 'Children' | 'Should' | 'Thyself' | 'Ourselves' | 'Would' | 'Because' | 'Before' | 'Behind' | 'Below' | 'Beneath' | 'Beside' | 'Between' | 'Beyond' | 'Conceive' | 'Conceiving' | 'Oneself')
-        {self.not_alnum(1)}?
-    ;
+//SHORTFORM_F
+    //:   {self.not_alnum(-1)}?
+    //    ('About' | 'Above' | 'According' | 'Across' | 'After' | 'Afternoon' | 'Afterward' | 'Again' | 'Against' | 'Also' | 'Almost' | 'Already' | 'Altogether' | 'Although' | 'Always' | 'Blind' | 'Braille' | 'Could' | 'Declare' | 'Declaring' | 'Deceive' | 'Deceiving' | 'Either' | 'Friend' | 'First' | 'Good' | 'Great' | 'Him' | 'Himself' | 'Herself' | 'Immediate' | 'Little' | 'Letter' | 'Myself' | 'Much' | 'Must' | 'Necessary' | 'Neither' | 'Paid' | 'Perceive' | 'Perceiving' | 'Perhaps' | 'Quick' | 'Receive' | 'Receiving' | 'Rejoice' | 'Rejoicing' | 'Said' | 'Such' | 'Today' | 'Together' | 'Tomorrow' | 'Tonight' | 'Itself' | 'Its' | 'Your' | 'Yourself' | 'Yourselves' | 'Themselves' | 'Children' | 'Should' | 'Thyself' | 'Ourselves' | 'Would' | 'Because' | 'Before' | 'Behind' | 'Below' | 'Beneath' | 'Beside' | 'Between' | 'Beyond' | 'Conceive' | 'Conceiving' | 'Oneself')
+  //      {self.not_alnum(1)}?
+//    ;
 
 STRONG_GROUPSIGN_L
     :
